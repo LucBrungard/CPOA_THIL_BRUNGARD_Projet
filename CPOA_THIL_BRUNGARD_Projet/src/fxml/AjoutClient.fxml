@@ -68,17 +68,17 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <TextField fx:id="editRue" maxWidth="-Infinity" minWidth="36.0" prefHeight="26.0" prefWidth="66.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <TextField fx:id="editNo" maxWidth="-Infinity" minWidth="36.0" prefHeight="26.0" prefWidth="66.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </TextField>
-                  <TextField fx:id="editNo" maxWidth="-Infinity" prefHeight="26.0" prefWidth="67.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <TextField fx:id="editCodePostal" maxWidth="-Infinity" prefHeight="26.0" prefWidth="67.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </TextField>
-                  <TextField fx:id="editCodePostal" maxWidth="-Infinity" prefHeight="23.0" prefWidth="201.0" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                  <TextField fx:id="editRue" maxWidth="-Infinity" prefHeight="23.0" prefWidth="201.0" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>

@@ -1,5 +1,6 @@
 package modele;
 
+
 public class Client {
 	private int id;
 	private String nom ;
@@ -25,7 +26,7 @@ public class Client {
 	public int getId() {
 		return this.id;
 	}
-
+	
 	public void setId(int id) {
 		if (id > 0) this.id = id;
 	}
@@ -172,9 +173,9 @@ public class Client {
 		return "Client [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", numero=" + numero + ", rue=" + rue
 				+ ", codePostal=" + codePostal + ", ville=" + ville + ", pays=" + pays + "]";
 	}
-
-
 	
-
+	public String toStringUtilisateur() {
+		return nom + " " + prenom + "," + numero + " " + "rue" + rue + " " + codePostal+ " " + ville + "," + pays; 
+	}
 	
 }

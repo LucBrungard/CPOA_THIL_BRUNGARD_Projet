@@ -30,9 +30,14 @@ public class MySQLClientDAO implements ClientDAO{
 		int nbLignes = 0;
 		
 		PreparedStatement requete = laConnexion.prepareStatement("insert into `Client` (`nom`, `prenom`, `identifiant`, `mot_de_passe`, `adr_numero`, `adr_voie`, `adr_code_postal`, `adr_ville`, `adr_pays`) "
-				+ "VALUES (?, ?,'identifiant', 'mdp' , 0, 0, 0, 'HOME', 'LAND')");	
+				+ "VALUES (?, ?,'identifiant', 'mdp' ,? ,? ,? ,?, ?)");	
 		requete.setString(1, client.getNom());	
 		requete.setString(2, client.getPrenom());	
+		requete.setString(5, client.getNumero());	
+		requete.setString(6, client.getRue());	
+		requete.setString(7, client.getCodePostal());	
+		requete.setString(8, client.getVille());	
+		requete.setString(9, client.getPays());		
 		
 		nbLignes = requete.executeUpdate(); 
 		
@@ -96,13 +101,13 @@ public class MySQLClientDAO implements ClientDAO{
 		
 		Connection laConnexion = Connexion.creeConnexion();
 		
-		PreparedStatement requete = laConnexion.prepareStatement("select id_client, nom, prenom from `Client` where id_client =" + id);
+		PreparedStatement requete = laConnexion.prepareStatement("select id_client, nom, prenom, adr_numero, adr_voie, adr_code_postal, adr_ville, adr_pays from `Client` where id_client =" + id);
 		
 		ResultSet res = requete.executeQuery();
 		
 		//S'il y a une valeur dans le resultat
 		if (res.next()) {
-			client = new Client(res.getInt(1), res.getString(2), res.getString(3));
+			client = new Client(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6), res.getString(7), res.getString(8));
 		}
 		else {
 			throw new IllegalArgumentException("\nAucun client ne correspond a cet identifiant");
@@ -124,7 +129,7 @@ public class MySQLClientDAO implements ClientDAO{
 		ResultSet res = requete.executeQuery();
 		
 		while (res.next()) {
-			listeClient.add(new Client(res.getInt(1), res.getString(2), res.getString(3)));
+			listeClient.add(new Client(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6), res.getString(7), res.getString(8)));
 		}
 		
 		if (laConnexion != null)
