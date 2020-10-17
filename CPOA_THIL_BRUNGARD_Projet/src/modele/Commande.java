@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
+import dao.Persistance;
+import dao.factory.DAOFactory;
+
 public class Commande {
 	DateTimeFormatter formatage = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
@@ -43,6 +46,16 @@ public class Commande {
 	public void setIdClient(int idClient) {
 		if (idClient > 0) 
 			this.idClient = idClient;
+	}
+	
+	public String getNomClient() {
+		try {
+			return DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().getById(idClient).getNom();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public HashMap<Produit, LigneCommande> getLigneCommande() {

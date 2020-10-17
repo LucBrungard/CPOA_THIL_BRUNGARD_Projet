@@ -127,42 +127,7 @@ public class Client {
 		if (getClass() != obj.getClass())
 			return false;
 		Client other = (Client) obj;
-		if (codePostal == null) {
-			if (other.codePostal != null)
-				return false;
-		} else if (!codePostal.equals(other.codePostal))
-			return false;
 		if (id != other.id)
-			return false;
-		if (nom == null) {
-			if (other.nom != null)
-				return false;
-		} else if (!nom.equals(other.nom))
-			return false;
-		if (numero == null) {
-			if (other.numero != null)
-				return false;
-		} else if (!numero.equals(other.numero))
-			return false;
-		if (pays == null) {
-			if (other.pays != null)
-				return false;
-		} else if (!pays.equals(other.pays))
-			return false;
-		if (prenom == null) {
-			if (other.prenom != null)
-				return false;
-		} else if (!prenom.equals(other.prenom))
-			return false;
-		if (rue == null) {
-			if (other.rue != null)
-				return false;
-		} else if (!rue.equals(other.rue))
-			return false;
-		if (ville == null) {
-			if (other.ville != null)
-				return false;
-		} else if (!ville.equals(other.ville))
 			return false;
 		return true;
 	}

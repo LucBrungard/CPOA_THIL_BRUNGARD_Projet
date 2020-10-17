@@ -26,14 +26,14 @@ public class ListeMemoireClientDAO implements ClientDAO {
 
 		this.donnees = new ArrayList<Client>();
 
-		this.donnees.add(new Client(1, "LAROCHE", "Pierre", "12", "rue des étudiants", "57990", "Metz", "France"));
+		this.donnees.add(new Client(1, "LAROCHE", "Pierre", "12", "rue des etudiants", "57990", "Metz", "France"));
 	}
 
 
 	@Override
 	public boolean create(Client objet) throws IllegalArgumentException {
 
-		objet.setId(2);
+		objet.setId(1);
 		// Ne fonctionne que si l'objet metier est bien fait...
 		while (this.donnees.contains(objet)) {
 

@@ -14,7 +14,7 @@ public class Main extends Application{
 	public void start(Stage primaryStage) {
 		
 		try {
-			URL fxmlURL=getClass().getResource("/fxml/AjoutClient.fxml");
+			URL fxmlURL=getClass().getResource("/fxml/Main.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
