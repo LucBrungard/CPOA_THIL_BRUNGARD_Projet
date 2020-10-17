@@ -58,7 +58,7 @@ public class PageCommandeController implements Initializable {
 		this.tabCommande.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
 					this.deleteCommande.setDisable(newValue == null);
-					this.deleteCommande.setDisable(newValue == null);
+					this.editCommande.setDisable(newValue == null);
 					this.detailCommande.setDisable(newValue == null);
 				});
 		

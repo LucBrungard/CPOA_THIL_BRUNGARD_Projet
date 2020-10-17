@@ -48,7 +48,7 @@ public class ListeMemoireCategorieDAO implements CategorieDAO {
 	@Override
 	public boolean update(Categorie objet) {
 		
-		// Ne fonctionne que si l'objet m�tier est bien fait...
+		// Ne fonctionne que si l'objet metier est bien fait...
 		int idx = donnees.indexOf(objet);
 		if (idx == -1) {
 			throw new IllegalArgumentException("Tentative de modification d'une categorie inexistante");

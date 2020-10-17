@@ -15,7 +15,7 @@
          <children>
             <VBox alignment="CENTER" minWidth="100.0" spacing="20.0">
                <children>
-                  <Button fx:id="addCateg" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0">
+                  <Button fx:id="addCateg" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#ajoutCateg" prefHeight="60.0" prefWidth="60.0">
                      <graphic>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -24,7 +24,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="deleteCateg" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0">
+                  <Button fx:id="deleteCateg" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#supprCateg" prefHeight="60.0" prefWidth="60.0">
                      <graphic>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -33,11 +33,20 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="editCateg" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0">
+                  <Button fx:id="editCateg" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#modifCateg" prefHeight="60.0" prefWidth="60.0">
                      <graphic>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../image/modif.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="deleteCateg1" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#chercherCateg" prefHeight="60.0" prefWidth="60.0">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../image/chercher.png" />
                            </image>
                         </ImageView>
                      </graphic>

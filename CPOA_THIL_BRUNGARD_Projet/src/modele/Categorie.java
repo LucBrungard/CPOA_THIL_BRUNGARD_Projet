@@ -56,17 +56,11 @@ public class Categorie {
 			return false;
 		return true;
 	}
-
-	
+		
 	@Override
 	public String toString() {
-		return titre;
-	}
-		
-	/*@Override
-	public String toString() {
 		return "Categorie [id=" + id + ", titre=" + titre + ", visuel=" + visuel + "]";
-	}*/
+	}
 	
 	
 }
