@@ -54,6 +54,7 @@ public class Categorie {
 		Categorie other = (Categorie) obj;
 		if (id != other.id)
 			return false;
+		
 		return true;
 	}
 		

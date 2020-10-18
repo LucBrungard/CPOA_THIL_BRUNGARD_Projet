@@ -29,18 +29,32 @@ public class ListeMemoireCategorieDAO implements CategorieDAO {
 		donnees.add(new Categorie(2, "Bonnets", "bonnets.png"));
 	}
 
+	//Fonction de verification si le titre de categ existe deja
+	private boolean duplicata(Categorie categorie) {
+		String titre = categorie.getTitre();
+		
+		for (int i = 0; i < donnees.size(); i++) {
+			if (donnees.get(i).getTitre().equals(titre))
+				return true;
+		}
+		return false;
+	}
 
 	@Override
 	public boolean create(Categorie categorie) {
-
+		System.out.println(categorie.toString());
 		categorie.setId(3);
 		
 		// Ne fonctionne que si l'objet metier est bien fait...
 		while (donnees.contains(categorie)) {
-
 			categorie.setId(categorie.getId() + 1);
 		}
-		boolean ok = donnees.add(categorie);
+		
+		boolean ok = duplicata(categorie);
+		if (!ok)
+			ok = donnees.add(categorie);
+		else 
+			throw new IllegalArgumentException("Ce titre de categorie existe deja !");
 		
 		return ok;
 	}
@@ -53,8 +67,10 @@ public class ListeMemoireCategorieDAO implements CategorieDAO {
 		if (idx == -1) {
 			throw new IllegalArgumentException("Tentative de modification d'une categorie inexistante");
 		} else {
-			
-			donnees.set(idx, objet);
+			if (!duplicata(objet))
+				donnees.set(idx, objet);
+			else
+				throw new IllegalArgumentException("Ce titre de categorie existe deja !");
 		}
 		
 		return true;

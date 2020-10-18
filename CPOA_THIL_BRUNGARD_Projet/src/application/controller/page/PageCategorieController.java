@@ -1,6 +1,7 @@
 package application.controller.page;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.controller.MainController;
@@ -8,15 +9,21 @@ import application.controller.edit.EditCategorieController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CategorieDAO;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import modele.Categorie;
@@ -43,26 +50,38 @@ public class PageCategorieController implements Initializable {
 		main = mainController;
 	}
 	
+	
+	
+	
 	//Initialisation des donnees (tableau + boutons) + rajout des listeners sur les tableaux
 	public void initData() {
+		this.deleteCateg.setDisable(true);
+		this.editCateg.setDisable(true);
+		
 		this.titreCateg.setCellValueFactory(new PropertyValueFactory<Categorie, String>("titre"));
 		this.visuelCateg.setCellValueFactory(new PropertyValueFactory<Categorie, String>("visuel"));
 		
 		this.tabCateg.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
+					this.addCateg.setDisable(newValue != null);
 					this.deleteCateg.setDisable(newValue == null);
 					this.editCateg.setDisable(newValue == null);
+					this.categorie = this.tabCateg.getSelectionModel().getSelectedItem();
 				});
 		
-		//On ajoute un listener pour renvoyer l'item selectionne dans une variable private
-		this.tabCateg.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-		    if (newSelection != null) {
-		    	this.categorie = this.tabCateg.getSelectionModel().getSelectedItem();
+		this.tabCateg.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+		    Node source = evt.getPickResult().getIntersectedNode();
+		   
+		    // move up through the node hierarchy until a TableRow or scene root is found 
+		    while (source != null && !(source instanceof TableRow)) {
+		        source = source.getParent();
+		    }
+
+		    // clear selection on click anywhere but on a filled row
+		    if (source == null || (source instanceof TableRow && ((TableRow) source).isEmpty())) {
+		        tabCateg.getSelectionModel().clearSelection();
 		    }
 		});
-		
-		this.deleteCateg.setDisable(true);
-		this.editCateg.setDisable(true);
 		
 		try {
 			this.tabCateg.getItems().addAll(categDAO.findAll());
@@ -86,15 +105,21 @@ public class PageCategorieController implements Initializable {
 	public void ajoutCateg() {
 		Stage nStage = new Stage();
 		try {
-			URL fxmlURL=getClass().getResource("/fxml/AjoutClient.fxml");
+			//On charge l'url de la page ModifCateg.fxml
+			URL fxmlURL=getClass().getResource("/fxml/add/AjoutCategorie.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			Scene scene = new Scene((AnchorPane) root, 700, 440);
+			//On affiche la fenetre ModifCateg
+			Scene scene = new Scene((AnchorPane) root, 350, 200);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Creer un client");
 			nStage.show();
+			
+			//On ferme la fenetre PageCategorie.fxml
+			Stage stage = (Stage) this.tabCateg.getScene().getWindow();
+			stage.close();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -103,7 +128,24 @@ public class PageCategorieController implements Initializable {
 	
 	
 	public void supprCateg() {
-		System.out.println("supprimer");
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Alerte suppression");
+		alert.setContentText("Etes vous certain de supprimer cette categorie ?");
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK){
+			try {
+				categDAO.delete(categorie);
+				clearAll();
+				initData();
+			} 
+			catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}	
+		else {
+			tabCateg.getSelectionModel().clearSelection();
+			alert.close();
+		}
 	}
 	
 	

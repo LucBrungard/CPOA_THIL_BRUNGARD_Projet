@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import modele.Categorie;
 
@@ -75,6 +76,7 @@ public class EditCategorieController implements Initializable {
 			nStage.show();
 			
 		} catch (Exception e1) {
+			this.lblAffichage.setTextFill(Color.web("#bb0b0b"));
 			this.lblAffichage.setText(e1.getMessage());
 		}
 	}
