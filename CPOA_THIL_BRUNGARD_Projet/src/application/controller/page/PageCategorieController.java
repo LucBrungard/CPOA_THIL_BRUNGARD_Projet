@@ -9,7 +9,8 @@ import application.controller.edit.EditCategorieController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CategorieDAO;
-import javafx.event.Event;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -22,6 +23,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -39,18 +41,20 @@ public class PageCategorieController implements Initializable {
 	@FXML private Button addCateg;
 	@FXML private Button deleteCateg;
 	@FXML private Button editCateg;
+	@FXML private TextField searchTitre;
+	@FXML private TextField searchVisuel;
 	
 	private MainController main;
 	
 	CategorieDAO categDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
+	
+	ObservableList<Categorie> trans = FXCollections.observableArrayList();
 	
 	
 	//Instancie la classe MainController
 	public void init(MainController mainController) {
 		main = mainController;
 	}
-	
-	
 	
 	
 	//Initialisation des donnees (tableau + boutons) + rajout des listeners sur les tableaux
@@ -91,15 +95,18 @@ public class PageCategorieController implements Initializable {
 		}
 	}
 	
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initData();
 	}
 	
+	
 	//On vide les donnees du tableau
 	public void clearAll() {
 		this.tabCateg.getItems().clear();
 	}
+	
 	
 	//Fonction appelee lors du clic sur le bouton Ajout
 	public void ajoutCateg() {
@@ -127,6 +134,7 @@ public class PageCategorieController implements Initializable {
 	}
 	
 	
+	//Fonction appelee lors du clic sur le bouton Supprimer
 	public void supprCateg() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
@@ -180,7 +188,68 @@ public class PageCategorieController implements Initializable {
 		}
 	}
 	
-	public void chercherCateg() {
-		System.out.println("chercher");
+	
+	public void refresh() {
+		trans.clear();
+		
+		if(searchTitre.getText().trim().equals("")) {
+			if(searchVisuel.getText().trim().equals("")) {
+				try {
+					trans.addAll(categDAO.findAll());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				try {
+					for (Categorie categorie : categDAO.findAll()) {
+						/*Si le titre de categorie contient la chaine rentree dans le text field, 
+						alors on la rajoute a la liste de transition*/
+						if (categorie.getVisuel().contains(searchVisuel.getText().trim())) {
+							trans.add(categorie);
+						}
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		else {
+			if(searchVisuel.getText().trim().equals("")) {
+				try {
+					for (Categorie categorie : categDAO.findAll()) {
+						/*Si le titre de categorie contient la chaine rentree dans le text field, 
+						alors on la rajoute a la liste de transition*/
+						if (categorie.getTitre().contains(searchTitre.getText().trim())) {
+							trans.add(categorie);
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				try {
+					for (Categorie categorie : categDAO.findAll()) {
+						/*Si le titre de categorie contient la chaine rentree dans le text field, 
+						alors on la rajoute a la liste de transition*/
+						if (categorie.getTitre().contains(searchTitre.getText().trim())) {
+							if (categorie.getVisuel().contains(searchVisuel.getText().trim())) {
+								trans.add(categorie);
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		//On vide les donnees actuelles du tableau
+		clearAll();
+		
+		//Et on remet les nouvelles categories selectionnees
+		tabCateg.getItems().addAll(trans);
 	}
 }
