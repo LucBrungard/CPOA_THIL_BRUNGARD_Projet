@@ -41,7 +41,7 @@ public class AjoutCategorieController implements Initializable {
 		
 		Stage nStage = new Stage();
 		try {
-			//On charge URL de la PageCategorie.fxml
+			//On charge URL de la Main.fxml
 			URL fxmlURL=getClass().getResource("/fxml/page/PageCategorie.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
@@ -50,16 +50,19 @@ public class AjoutCategorieController implements Initializable {
 			//On creer dans la DAO l'objet Categorie
 			categorieDAO.create(new Categorie(1, titre, visuel));
 			
-			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
-			Stage stage = (Stage) btnCreer.getScene().getWindow();
-			stage.close();
-			
 			//On vide les donnees du tableau et on le reremplit
 			controller.clearAll();
 			controller.initData();
 			
+			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
+			Stage stage = (Stage) btnCreer.getScene().getWindow();
+			stage.close();
+			
+			URL fxmlURL2=getClass().getResource("/fxml/Main.fxml");
+			FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
+			Node root2 = fxmlLoader2.load();
 			//Et on rouvre la fenetre PageCateg.fxml avec les nouvelles donnees
-			Scene scene = new Scene((AnchorPane) root, 700, 440);
+			Scene scene = new Scene((AnchorPane) root2, 700, 440);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.show();

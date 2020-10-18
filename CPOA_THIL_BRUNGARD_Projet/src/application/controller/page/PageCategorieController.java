@@ -166,18 +166,18 @@ public class PageCategorieController implements Initializable {
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
+			//On affiche la fenetre ModifCateg
+			Scene scene = new Scene((AnchorPane) root, 350, 200);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Modififer un client");
+			nStage.show();
+			
 			//On recupere le controleur de la page ModifCateg.fxml
 			EditCategorieController controller = fxmlLoader.getController();
 			
 			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
 			controller.initData(tabCateg.getSelectionModel().getSelectedItem());
-			
-			//On affiche la fenetre ModifCateg
-			Scene scene = new Scene((AnchorPane) root, 350, 200);
-			nStage.setScene(scene);
-			nStage.setResizable(false);
-			nStage.setTitle("Modifier un client");
-			nStage.show();
 			
 			//On ferme la fenetre PageCategorie.fxml
 			Stage stage = (Stage) this.tabCateg.getScene().getWindow();
@@ -191,9 +191,11 @@ public class PageCategorieController implements Initializable {
 	
 	public void refresh() {
 		trans.clear();
+		String titre = searchTitre.getText().trim().toLowerCase();
+		String visuel = searchVisuel.getText().trim().toLowerCase();
 		
-		if(searchTitre.getText().trim().equals("")) {
-			if(searchVisuel.getText().trim().equals("")) {
+		if(titre.equals("")) {
+			if(visuel.equals("")) {
 				try {
 					trans.addAll(categDAO.findAll());
 				} catch (Exception e) {
@@ -205,7 +207,7 @@ public class PageCategorieController implements Initializable {
 					for (Categorie categorie : categDAO.findAll()) {
 						/*Si le titre de categorie contient la chaine rentree dans le text field, 
 						alors on la rajoute a la liste de transition*/
-						if (categorie.getVisuel().contains(searchVisuel.getText().trim())) {
+						if (categorie.getVisuel().toLowerCase().contains(visuel)) {
 							trans.add(categorie);
 						}
 					}
@@ -216,12 +218,12 @@ public class PageCategorieController implements Initializable {
 			}
 		}
 		else {
-			if(searchVisuel.getText().trim().equals("")) {
+			if(visuel.equals("")) {
 				try {
 					for (Categorie categorie : categDAO.findAll()) {
 						/*Si le titre de categorie contient la chaine rentree dans le text field, 
 						alors on la rajoute a la liste de transition*/
-						if (categorie.getTitre().contains(searchTitre.getText().trim())) {
+						if (categorie.getTitre().toLowerCase().contains(titre)) {
 							trans.add(categorie);
 						}
 					}
@@ -234,8 +236,8 @@ public class PageCategorieController implements Initializable {
 					for (Categorie categorie : categDAO.findAll()) {
 						/*Si le titre de categorie contient la chaine rentree dans le text field, 
 						alors on la rajoute a la liste de transition*/
-						if (categorie.getTitre().contains(searchTitre.getText().trim())) {
-							if (categorie.getVisuel().contains(searchVisuel.getText().trim())) {
+						if (categorie.getTitre().toLowerCase().contains(titre)) {
+							if (categorie.getVisuel().toLowerCase().contains(visuel)) {
 								trans.add(categorie);
 							}
 						}

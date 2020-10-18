@@ -1,6 +1,5 @@
 package application.controller.edit;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -52,7 +51,7 @@ public class EditCategorieController implements Initializable {
 		
 		Stage nStage = new Stage();
 		try {
-			//On charge URL de la PageCategorie.fxml
+			//On charge URL de la Main.fxml
 			URL fxmlURL=getClass().getResource("/fxml/page/PageCategorie.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
@@ -69,8 +68,11 @@ public class EditCategorieController implements Initializable {
 			controller.clearAll();
 			controller.initData();
 			
+			URL fxmlURL2=getClass().getResource("/fxml/Main.fxml");
+			FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
+			Node root2 = fxmlLoader2.load();
 			//Et on rouvre la fenetre PageCateg.fxml avec les nouvelles donnees
-			Scene scene = new Scene((AnchorPane) root, 700, 440);
+			Scene scene = new Scene((AnchorPane) root2, 700, 440);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.show();
