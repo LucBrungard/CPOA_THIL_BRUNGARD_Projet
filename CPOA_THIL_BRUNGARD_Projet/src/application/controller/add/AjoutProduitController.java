@@ -34,10 +34,10 @@ public class AjoutProduitController implements Initializable{
 	    	this.editNom.setText("");
 	    	this.editDesc.setText("");
 	    	this.editTarif.setText("");
-	    	//this.cbxCategorie.setSelectionModel(null);
 			this.cbxCategorie.setItems(FXCollections.observableArrayList(dao.getCategorieDAO().findAll()));
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	   
