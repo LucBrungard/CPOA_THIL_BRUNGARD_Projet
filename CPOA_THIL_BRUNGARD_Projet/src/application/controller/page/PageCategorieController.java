@@ -31,7 +31,6 @@ import javafx.stage.Stage;
 import modele.Categorie;
 
 public class PageCategorieController implements Initializable {
-	@FXML EditCategorieController editCategorie;
 	private Categorie categorie;
 	
 	@FXML private TableView<Categorie> tabCateg;
@@ -152,7 +151,7 @@ public class PageCategorieController implements Initializable {
 		}	
 		else {
 			tabCateg.getSelectionModel().clearSelection();
-			alert.close();
+			//alert.close();
 		}
 	}
 	

@@ -3,96 +3,120 @@ package application.controller.edit;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import application.controller.page.PageCategorieController;
+import application.controller.page.PageProduitController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
+import dao.modele.CategorieDAO;
+import dao.modele.ProduitDAO;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import modele.Categorie;
 import modele.Produit;
 
 public class EditProduitController implements Initializable{
-	@FXML private Button btnCreer;
+	@FXML private Button btnModif;
 	@FXML private Label lblAffichage;
 	@FXML private TextField editNom;
 	@FXML private TextArea editDesc; 
 	@FXML private TextField editTarif;
 	@FXML private ChoiceBox<Categorie> cbxCategorie;
+	ObservableList<Categorie> listeCateg = FXCollections.observableArrayList();
 	
-	DAOFactory dao = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE);
+	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
+	CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
+	
+	private Produit selectedItem;
 	
 	@Override
     public void initialize(URL location, ResourceBundle resources) {
-	    try {
-	    	this.lblAffichage.setText("");
-	    	this.editNom.setText("");
-	    	this.editDesc.setText("");
-	    	this.editTarif.setText("");
-	    	//this.cbxCategorie.setSelectionModel(null);
-			this.cbxCategorie.setItems(FXCollections.observableArrayList(dao.getCategorieDAO().findAll()));
-			
-		} catch (Exception e) {
-		}
 	}
 	   
+	public void initData(Produit produit) {
+		selectedItem = produit;
+		
+		editNom.setText(produit.getNom());
+		editDesc.setText(produit.getDescription());
+		editTarif.setText(Float.toString(produit.getTarif()));
+		try {
+			cbxCategorie.getItems().setAll(categorieDAO.findAll());
+			cbxCategorie.setValue(categorieDAO.getById(selectedItem.getIdCateg()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		lblAffichage.setText("");
+		
+	}
+
 	@FXML
-	public void creerProduit() {
+	public void modifProduit() {
 		String nom = editNom.getText().trim();
 		String desc = editDesc.getText().trim(); 
 		float tarif = 0;
-		String erreur="";
 		
 		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
-		Categorie selectItem = cbxCategorie.getSelectionModel().getSelectedItem(); 
+		Categorie selectCateg = cbxCategorie.getSelectionModel().getSelectedItem(); 
+		int idCateg = 0;
+		
+		if (selectCateg != null) {
+			idCateg = selectCateg.getId();
+		}
 		
 		//on convertit le tarif qui est en String en int 
 		try {
-			tarif = Float.parseFloat(editTarif.getText().trim());
+			if (!editTarif.getText().trim().equals(""))
+				tarif = Float.parseFloat(editTarif.getText().trim());
 		}
 		catch (NumberFormatException e) {
+			this.lblAffichage.setText("Veuillez rentrer un tarif raisonnable !");
 		}
 		
-		if (nom.isEmpty()) {
-			erreur = erreur + "\nLe nom est vide";
-		}
-		if (desc.isEmpty()) {
-			erreur = erreur + "\nLa description est vide";
-		}
-		if (tarif <= 0) {
-			erreur = erreur + "\nVeuillez saisir un tarif raisonnable";
-		}
-		if (selectItem == null) {
-			erreur = erreur + "\nVeuillez selectionner une categorie";
-		}
-		
-		if (erreur != "") {
-			this.lblAffichage.setTextFill(Color.web("#bb0b0b"));
-			this.lblAffichage.setText(erreur);
-		}
-		else {
-			//on creer une instance de produit 
-			Produit p1 = new Produit(1, nom, desc, tarif, nom.concat(".png"), selectItem.getId());
+		Stage nStage = new Stage();
+		try {
+			//On charge URL de la PageProduit.fxml
+			URL fxmlURL=getClass().getResource("/fxml/page/PageProduit.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+			Node root = fxmlLoader.load();
+			PageProduitController controller = fxmlLoader.getController();
 			
-			try {
-				DAOFactory.getDAOFactory(Persistance.MYSQL).getProduitDAO().create(p1);
-				DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO().create(p1); 
-				
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			} 
-			initialize(null, null);
-			this.lblAffichage.setTextFill(Color.web("#000000"));
-			if(tarif > 1) 
-				this.lblAffichage.setText(p1.toStringUtilisateur() + "s");
-			else 
-				this.lblAffichage.setText(p1.toStringUtilisateur());
+			//On creer dans la DAO l'objet Produit
+			produitDAO.update(new Produit(selectedItem.getId(), nom, desc, tarif, nom.concat(".png"), idCateg));
+			
+			//On vide les donnees du tableau et on le reremplit
+			controller.clearAll();
+			controller.initData();
+			
+			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
+			Stage stage = (Stage) btnModif.getScene().getWindow();
+			stage.close();
+			
+			URL fxmlURL2=getClass().getResource("/fxml/Main.fxml");
+			FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
+			Node root2 = fxmlLoader2.load();
+			//Et on rouvre la fenetre Main.fxml avec les nouvelles donnees
+			Scene scene = new Scene((AnchorPane) root2, 700, 440);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.show();
+		}
+		catch (Exception e) {
+			this.lblAffichage.setTextFill(Color.RED);
+			this.lblAffichage.setText(e.getMessage());
 		}
 	}
 }

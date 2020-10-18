@@ -56,7 +56,10 @@ public class Produit {
 	}
 
 	public void setTarif(float tarif) {
-		if (tarif > 0) this.tarif = tarif;
+		if (tarif > 0) 
+			this.tarif = tarif;
+		else 
+			throw new IllegalArgumentException("Veuillez rentrer un tarif raisonnable !");
 	}
 
 	public String getVisuel() {

@@ -41,7 +41,7 @@ public class AjoutCategorieController implements Initializable {
 		
 		Stage nStage = new Stage();
 		try {
-			//On charge URL de la Main.fxml
+			//On charge URL de la PageCategorie.fxml
 			URL fxmlURL=getClass().getResource("/fxml/page/PageCategorie.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
@@ -61,7 +61,7 @@ public class AjoutCategorieController implements Initializable {
 			URL fxmlURL2=getClass().getResource("/fxml/Main.fxml");
 			FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
 			Node root2 = fxmlLoader2.load();
-			//Et on rouvre la fenetre PageCateg.fxml avec les nouvelles donnees
+			//Et on rouvre la fenetre Main.fxml avec les nouvelles donnees
 			Scene scene = new Scene((AnchorPane) root2, 700, 440);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
