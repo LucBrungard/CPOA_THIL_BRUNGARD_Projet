@@ -6,28 +6,28 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane minHeight="440.0" minWidth="700.0" prefHeight="440.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.MainController">
+<AnchorPane stylesheets="@../css/pageCss.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.MainController">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE" tabMinWidth="150.0">
+            <TabPane side="BOTTOM" style="-fx-background-color: #426FAF;" tabClosingPolicy="UNAVAILABLE" tabMinWidth="150.0">
               <tabs>
-                <Tab text="Client">
+                <Tab style="-fx-background-color: #FFFFFF; -fx-margin: 100px 100px 100px 100px;" text="Client">
                      <content>
                         <fx:include source="page/PageClient.fxml" />
                      </content>
                 </Tab>
-                <Tab closable="false" text="Produit">
+                <Tab closable="false" style="-fx-background-color: #FFFFFF;" text="Produit">
                      <content>
                         <fx:include source="page/PageProduit.fxml" />
                      </content>
                 </Tab>
-                  <Tab text="Categorie">
+                  <Tab style="-fx-background-color: #FFFFFF;" text="Categorie">
                      <content>
                         <fx:include source="page/PageCategorie.fxml" />
                      </content>
                   </Tab>
-                  <Tab text="Commande">
+                  <Tab style="-fx-background-color: #FFFFFF;" text="Commande">
                      <content>
                         <fx:include source="page/PageCommande.fxml" />
                      </content>
