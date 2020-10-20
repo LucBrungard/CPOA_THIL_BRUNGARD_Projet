@@ -34,6 +34,16 @@ public class ListeMemoireProduitDAO implements ProduitDAO {
 		this.donnees.add(new Produit(12, "Dall", "Joyeux Noel avec nos petits lutins dansants !", (float)35, "bonnet1.png", 2)); 
 	}
 
+	//Fonction de verification si le titre de categ existe deja
+	private boolean duplicata(Produit produit) {
+		String nom = produit.getNom();
+		
+		for (int i = 0; i < donnees.size(); i++) {
+			if (donnees.get(i).getNom().equals(nom))
+				return true;
+		}
+		return false;
+	}
 
 	@Override
 	public boolean create(Produit objet) {
@@ -53,7 +63,11 @@ public class ListeMemoireProduitDAO implements ProduitDAO {
 
 				objet.setId(objet.getId() + 1);
 			}
-			this.donnees.add(objet);
+			
+			if(!duplicata(objet))
+				this.donnees.add(objet);
+			else 
+				throw new IllegalArgumentException("Ce nom de produit existe deja !");
 			
 		} 
 		else {

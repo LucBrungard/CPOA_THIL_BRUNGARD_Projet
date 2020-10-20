@@ -52,7 +52,7 @@
                      <children>
                         <HBox prefHeight="25.0" spacing="10.0">
                            <children>
-                              <TextField fx:id="searchNom" onKeyReleased="#refresh" prefHeight="25.0" prefWidth="100.0" />
+                              <TextField fx:id="searchNom" onKeyReleased="#filtrer" prefHeight="25.0" prefWidth="100.0" />
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../image/chercher.png" />
@@ -65,7 +65,7 @@
                         </HBox>
                         <HBox prefHeight="25.0" spacing="10.0">
                            <children>
-                              <TextField fx:id="searchTarif" onKeyReleased="#refresh" prefHeight="25.0" prefWidth="100.0" />
+                              <TextField fx:id="searchTarif" onKeyReleased="#filtrer" prefHeight="25.0" prefWidth="100.0" />
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../image/chercher.png" />
@@ -83,7 +83,7 @@
                         </HBox>
                         <HBox prefHeight="25.0" spacing="10.0">
                            <children>
-                              <TextField fx:id="searchCateg" onKeyReleased="#refresh" prefHeight="25.0" prefWidth="100.0" />
+                              <TextField fx:id="searchCateg" onKeyReleased="#filtrer" prefHeight="25.0" prefWidth="100.0" />
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../image/chercher.png" />
@@ -100,7 +100,7 @@
                      <columns>
                         <TableColumn fx:id="nomProduit" editable="false" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="125.0" resizable="false" style="-fx-alignment: CENTER;" text="Nom" />
                         <TableColumn fx:id="tarifProduit" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="125.0" resizable="false" style="-fx-alignment: CENTER;" text="Tarif" />
-                        <TableColumn fx:id="visuelProduit" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="100.0" resizable="false" style="-fx-alignment: CENTER;" text="Visuel" />
+                        <TableColumn fx:id="visuelProduit" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="100.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" text="Visuel" />
                         <TableColumn fx:id="categProduit" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="150.0" resizable="false" style="-fx-alignment: CENTER;" text="Categorie" />
                      </columns>
                      <columnResizePolicy>

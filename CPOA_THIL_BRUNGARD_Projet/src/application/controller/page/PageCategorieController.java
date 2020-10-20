@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.controller.MainController;
+import application.controller.add.AjoutCategorieController;
 import application.controller.edit.EditCategorieController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
@@ -27,6 +28,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import modele.Categorie;
 
@@ -43,12 +45,10 @@ public class PageCategorieController implements Initializable {
 	@FXML private TextField searchTitre;
 	@FXML private TextField searchVisuel;
 	
+	@SuppressWarnings("unused")
 	private MainController main;
 	
 	CategorieDAO categDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
-	
-	ObservableList<Categorie> trans = FXCollections.observableArrayList();
-	
 	
 	//Instancie la classe MainController
 	public void init(MainController mainController) {
@@ -81,7 +81,7 @@ public class PageCategorieController implements Initializable {
 		    }
 
 		    // clear selection on click anywhere but on a filled row
-		    if (source == null || (source instanceof TableRow && ((TableRow) source).isEmpty())) {
+		    if (source == null || (source instanceof TableRow && ((TableRow<?>) source).isEmpty())) {
 		        tabCateg.getSelectionModel().clearSelection();
 		    }
 		});
@@ -115,17 +115,23 @@ public class PageCategorieController implements Initializable {
 			URL fxmlURL=getClass().getResource("/fxml/add/AjoutCategorie.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
+			AjoutCategorieController controller = fxmlLoader.getController();
 			
 			//On affiche la fenetre ModifCateg
 			Scene scene = new Scene((AnchorPane) root, 350, 200);
+			
+			//initModality permet de stoper l'interaction avec la page en cours 
+			//pour garder le focus avec la nouvelle fentre qui va s'ouvrir
+			nStage.initModality(Modality.APPLICATION_MODAL);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Creer un client");
-			nStage.show();
+			nStage.showAndWait();
 			
-			//On ferme la fenetre PageCategorie.fxml
-			Stage stage = (Stage) this.tabCateg.getScene().getWindow();
-			stage.close();
+			//on recupere l'objet que l'on vient de creer et on l'ajoute dans le tableau
+			if (controller.getCategorie() != null) 
+				this.tabCateg.getItems().add(controller.getCategorie());
+			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -142,17 +148,13 @@ public class PageCategorieController implements Initializable {
 		if (result.get() == ButtonType.OK){
 			try {
 				categDAO.delete(categorie);
-				clearAll();
-				initData();
+				this.tabCateg.getItems().remove(categorie);
 			} 
 			catch(Exception e) {
-				System.out.println(e.getMessage());
+				e.printStackTrace();
 			}
 		}	
-		else {
-			tabCateg.getSelectionModel().clearSelection();
-			//alert.close();
-		}
+		tabCateg.getSelectionModel().clearSelection();
 	}
 	
 	
@@ -170,7 +172,7 @@ public class PageCategorieController implements Initializable {
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Modififer un client");
-			nStage.show();
+			nStage.initModality(Modality.APPLICATION_MODAL);
 			
 			//On recupere le controleur de la page ModifCateg.fxml
 			EditCategorieController controller = fxmlLoader.getController();
@@ -178,9 +180,13 @@ public class PageCategorieController implements Initializable {
 			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
 			controller.initData(tabCateg.getSelectionModel().getSelectedItem());
 			
-			//On ferme la fenetre PageCategorie.fxml
-			Stage stage = (Stage) this.tabCateg.getScene().getWindow();
-			stage.close();
+			//Et on affiche la page et on attend qu'elle soit fermee
+			nStage.showAndWait();
+			
+			//On actualise les donnees
+			tabCateg.getSelectionModel().clearSelection();
+			int posItem = tabCateg.getItems().indexOf(controller.getSelectedItem());
+			this.tabCateg.getItems().set(posItem, controller.getSelectedItem());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -188,69 +194,90 @@ public class PageCategorieController implements Initializable {
 	}
 	
 	
-	public void refresh() {
-		trans.clear();
+	public ObservableList<Categorie> filtrerTitre() {
+		ObservableList<Categorie> listeCateg = FXCollections.observableArrayList();
+		
 		String titre = searchTitre.getText().trim().toLowerCase();
+		
+		try {
+			if (titre.equals("")) 
+					listeCateg.addAll(categDAO.findAll());
+			else {
+				for (Categorie categorie : categDAO.findAll()) {
+					if (categorie.getTitre().toLowerCase().contains(titre)) {
+						listeCateg.add(categorie);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return listeCateg;
+	}
+	
+	public ObservableList<Categorie> filtrerVisuel() {
+		ObservableList<Categorie> listeCateg = FXCollections.observableArrayList();
+		
 		String visuel = searchVisuel.getText().trim().toLowerCase();
 		
-		if(titre.equals("")) {
-			if(visuel.equals("")) {
-				try {
-					trans.addAll(categDAO.findAll());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+		try {
+			if (visuel.equals("")) 
+					listeCateg.addAll(categDAO.findAll());
 			else {
-				try {
-					for (Categorie categorie : categDAO.findAll()) {
-						/*Si le titre de categorie contient la chaine rentree dans le text field, 
-						alors on la rajoute a la liste de transition*/
-						if (categorie.getVisuel().toLowerCase().contains(visuel)) {
-							trans.add(categorie);
-						}
-					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				for (Categorie categorie : categDAO.findAll()) {
+					if (categorie.getVisuel().toLowerCase().contains(visuel)) 
+						listeCateg.add(categorie);
 				}
 			}
-		}
-		else {
-			if(visuel.equals("")) {
-				try {
-					for (Categorie categorie : categDAO.findAll()) {
-						/*Si le titre de categorie contient la chaine rentree dans le text field, 
-						alors on la rajoute a la liste de transition*/
-						if (categorie.getTitre().toLowerCase().contains(titre)) {
-							trans.add(categorie);
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			else {
-				try {
-					for (Categorie categorie : categDAO.findAll()) {
-						/*Si le titre de categorie contient la chaine rentree dans le text field, 
-						alors on la rajoute a la liste de transition*/
-						if (categorie.getTitre().toLowerCase().contains(titre)) {
-							if (categorie.getVisuel().toLowerCase().contains(visuel)) {
-								trans.add(categorie);
-							}
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		//On vide les donnees actuelles du tableau
-		clearAll();
+		return listeCateg;
+	}
+	
+	private ObservableList<Categorie> max(ObservableList<Categorie> l1, ObservableList<Categorie>l2) {
+		if (l1.size() > l2.size())
+			return l1;
+		return l2;
+	}
+	
+	private ObservableList<Categorie> min(ObservableList<Categorie> l1, ObservableList<Categorie>l2) {
+		if (l1.size() > l2.size())
+			return l2;
+		return l1;
+	}
+	
+	public void filtrer() {
+		ObservableList<Categorie> l1 = filtrerTitre();
+		ObservableList<Categorie> l2 = filtrerVisuel();
+		ObservableList<Categorie> listeCategSelect = FXCollections.observableArrayList();
 		
-		//Et on remet les nouvelles categories selectionnees
-		tabCateg.getItems().addAll(trans);
+		ObservableList<Categorie> listeCategSurplus = FXCollections.observableArrayList();
+		ObservableList<Categorie> listeCategMino = FXCollections.observableArrayList();
+
+		//On recupere les categories presentes dans l1 ET l2
+		for (Categorie c1 : max(l1, l2)) {
+			if (min(l1, l2).contains(c1)) 
+				listeCategSelect.add(c1);
+		}
+		
+		//On enleve de la tableView toute categorie non presente dans listeCategSelect mais presente dans la tableView
+		ObservableList<Categorie> trans1 = tabCateg.getItems();
+		for (Categorie categorie : trans1) {
+			if (!listeCategSelect.contains(categorie))
+				listeCategSurplus.add(categorie);
+		}
+		
+		//On rajoute dans la tableView toute categorie presente dans listeCategSelect mais non presente dans la tableView
+		ObservableList<Categorie> trans2 = tabCateg.getItems();
+		for (Categorie categorie : listeCategSelect ) {
+			if (!trans2.contains(categorie))
+				listeCategMino.add(categorie);
+		}
+		
+		tabCateg.getItems().removeAll(listeCategSurplus);
+		tabCateg.getItems().addAll(listeCategMino);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.controller.MainController;
+import application.controller.add.AjoutProduitController;
 import application.controller.edit.EditProduitController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
@@ -20,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
@@ -27,13 +29,12 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import modele.Categorie;
 import modele.Produit;
 
 public class PageProduitController implements Initializable {
@@ -51,6 +52,7 @@ public class PageProduitController implements Initializable {
 	@FXML private TextField searchTarif;
 	@FXML private TextField searchCateg;
 	
+	@SuppressWarnings("unused")
 	private MainController main;
 	private Produit produit;
 	
@@ -91,7 +93,7 @@ public class PageProduitController implements Initializable {
 		    }
 
 		    // clear selection on click anywhere but on a filled row
-		    if (source == null || (source instanceof TableRow && ((TableRow) source).isEmpty())) {
+		    if (source == null || (source instanceof TableRow && ((TableRow<?>) source).isEmpty())) {
 		    	tabProduit.getSelectionModel().clearSelection();
 		    }
 		});
@@ -109,10 +111,9 @@ public class PageProduitController implements Initializable {
 
 	public void init(MainController mainController) {
 		main = mainController;
-		
 	}
 	
-	public ArrayList<Produit> refreshNom() {
+	public ArrayList<Produit> filtrerNom() {
 		String nom = searchNom.getText().trim().toLowerCase();
 		ArrayList<Produit> listeProd = new ArrayList<Produit>();
 		try {
@@ -132,7 +133,7 @@ public class PageProduitController implements Initializable {
 		return listeProd;
 	}
 	
-	public ArrayList<Produit> refreshTarif() {
+	public ArrayList<Produit> filtrerTarif() {
 		ArrayList<Produit> listeProd = new ArrayList<Produit>();
 		float tarif = 0;
 		
@@ -161,7 +162,7 @@ public class PageProduitController implements Initializable {
 		return listeProd;
 	}
 	
-	public ArrayList<Produit> refreshCateg() {
+	public ArrayList<Produit> filtrerCateg() {
 		String categ = searchCateg.getText().trim().toLowerCase();
 		ArrayList<Produit> listeProd = new ArrayList<Produit>();
 		try {
@@ -182,64 +183,71 @@ public class PageProduitController implements Initializable {
 		return listeProd;
 	}
 	
-	public void refresh() {
-		ArrayList<Produit> prodNom = refreshNom();
-		ArrayList<Produit> prodTarif = refreshTarif();
-		ArrayList<Produit> prodCateg = refreshCateg();
-		ObservableList<Produit> trans = FXCollections.observableArrayList();
-		
-		int t1 = prodNom.size();
-		int t2 = prodTarif.size();
-		int t3 = prodCateg.size();
-		
-		int max = Math.max(t1, t2);
-		max = Math.max(max, t3);
-		
-		if (t1 == max) {
-			for (Produit produit : prodNom) {
-				if (prodTarif.contains(produit) && prodCateg.contains(produit)) {
-					trans.add(produit);
-				}
-			}
-		}
-		else if (t2 == max) {
-			for (Produit produit : prodTarif) {
-				if (prodNom.contains(produit) && prodCateg.contains(produit)) {
-					trans.add(produit);
-				}
-			}
-		}
-		else if (t3 == max) {
-			for (Produit produit : prodCateg) {
-				if (prodTarif.contains(produit) && prodNom.contains(produit)) {
-					trans.add(produit);
-				}
-			}
-		}
-		
-		
-		clearAll();
-		tabProduit.getItems().addAll(trans);
+	private ArrayList<Produit> max(ArrayList<Produit> l1, ArrayList<Produit> l2, ArrayList<Produit> l3) {
+		if (l1.size() >= l2.size() && l1.size() >= l3.size())
+			return l1;
+		if (l2.size() >= l1.size() && l2.size() >= l3.size())
+			return l2;
+		if (l3.size() >= l1.size() && l3.size() >= l2.size())
+			return l3;
+		return l3;
 	}
-
+	
+	public void filtrer() {
+		ArrayList<Produit> prodNom = filtrerNom();
+		ArrayList<Produit> prodTarif = filtrerTarif();
+		ArrayList<Produit> prodCateg = filtrerCateg();
+		ObservableList<Produit> listeProdSelect = FXCollections.observableArrayList();
+		
+		ObservableList<Produit> listeProduitSurplus = FXCollections.observableArrayList();
+		ObservableList<Produit> listeProduitMino = FXCollections.observableArrayList();
+		
+		for (Produit produit : max(prodNom, prodTarif, prodCateg)) {
+			if (prodNom.contains(produit) 
+					&& prodTarif.contains(produit) 
+					&& prodCateg.contains(produit) )
+				listeProdSelect.add(produit);
+		}
+		//On enleve de la tableView tout produit non present dans listeProdSelect mais present dans la tableView
+		ObservableList<Produit> trans1 = tabProduit.getItems();
+		
+		for (Produit produit : trans1) {
+			if (!listeProdSelect.contains(produit))
+				listeProduitSurplus.add(produit);
+		}
+		
+		//On rajoute dans la tableView tout produit present dans listeProdSelect mais non present dans la tableView
+		ObservableList<Produit> trans2 = tabProduit.getItems();
+		for (Produit produit : listeProdSelect ) {
+			if (!trans2.contains(produit))
+				listeProduitMino.add(produit);
+		}
+		
+		tabProduit.getItems().removeAll(listeProduitSurplus);
+		tabProduit.getItems().addAll(listeProduitMino);
+	}
+	
 	public void ajoutProd() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page ModifCateg.fxml
+			//On charge l'url de la page AjoutProduit.fxml
 			URL fxmlURL=getClass().getResource("/fxml/add/AjoutProduit.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On affiche la fenetre ModifCateg
+			//On recupere le controleur de la page ModifCateg.fxml
+			AjoutProduitController controller = fxmlLoader.getController();
+			
+			//On affiche la fenetre AjoutProduit
 			Scene scene = new Scene((AnchorPane) root, 600, 350);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Creer un produit");
-			nStage.show();
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			nStage.showAndWait();
 			
-			//On ferme la fenetre PageCategorie.fxml
-			Stage stage = (Stage) this.tabProduit.getScene().getWindow();
-			stage.close();
+			if (controller.getProduitAjout() != null)
+				tabProduit.getItems().add(controller.getProduitAjout());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -254,22 +262,24 @@ public class PageProduitController implements Initializable {
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On affiche la fenetre ModifCateg
-			Scene scene = new Scene((AnchorPane) root, 600, 350);
-			nStage.setScene(scene);
-			nStage.setResizable(false);
-			nStage.setTitle("Modififer un produit");
-			nStage.show();
-			
 			//On recupere le controleur de la page ModifCateg.fxml
 			EditProduitController controller = fxmlLoader.getController();
 			
 			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
 			controller.initData(tabProduit.getSelectionModel().getSelectedItem());
 			
-			//On ferme la fenetre PageCategorie.fxml
-			Stage stage = (Stage) this.tabProduit.getScene().getWindow();
-			stage.close();
+			//On affiche la fenetre ModifCateg
+			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Modififer un produit");
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			nStage.showAndWait();
+			
+			//On modifie l'objet dans le tableau
+			tabProduit.getItems().set(
+					tabProduit.getItems().indexOf(controller.getSelectedItem()), 
+					controller.getSelectedItem());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -284,8 +294,8 @@ public class PageProduitController implements Initializable {
 		if (result.get() == ButtonType.OK){
 			try {
 				produitDAO.delete(produit);
-				clearAll();
-				initData();
+				tabProduit.getItems().remove(produit);
+				tabProduit.getSelectionModel().clearSelection();
 			} 
 			catch(Exception e) {
 				System.out.println(e.getMessage());

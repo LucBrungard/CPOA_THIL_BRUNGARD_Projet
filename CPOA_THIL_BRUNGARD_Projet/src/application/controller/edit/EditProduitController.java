@@ -3,8 +3,6 @@ package application.controller.edit;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import application.controller.page.PageCategorieController;
-import application.controller.page.PageProduitController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CategorieDAO;
@@ -12,16 +10,12 @@ import dao.modele.ProduitDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import modele.Categorie;
@@ -55,12 +49,10 @@ public class EditProduitController implements Initializable{
 			cbxCategorie.getItems().setAll(categorieDAO.findAll());
 			cbxCategorie.setValue(categorieDAO.getById(selectedItem.getIdCateg()));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		lblAffichage.setText("");
-		
 	}
 
 	@FXML
@@ -79,44 +71,30 @@ public class EditProduitController implements Initializable{
 		
 		//on convertit le tarif qui est en String en int 
 		try {
-			if (!editTarif.getText().trim().equals(""))
-				tarif = Float.parseFloat(editTarif.getText().trim());
+			tarif = Float.parseFloat(editTarif.getText().trim());
 		}
 		catch (NumberFormatException e) {
-			this.lblAffichage.setText("Veuillez rentrer un tarif raisonnable !");
+			this.lblAffichage.setText(e.getMessage());
 		}
 		
-		Stage nStage = new Stage();
 		try {
-			//On charge URL de la PageProduit.fxml
-			URL fxmlURL=getClass().getResource("/fxml/page/PageProduit.fxml");
-			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
-			Node root = fxmlLoader.load();
-			PageProduitController controller = fxmlLoader.getController();
-			
 			//On creer dans la DAO l'objet Produit
-			produitDAO.update(new Produit(selectedItem.getId(), nom, desc, tarif, nom.concat(".png"), idCateg));
+			Produit produit = new Produit(selectedItem.getId(), nom, desc, tarif, nom.concat(".png"), idCateg);
+			produitDAO.update(produit);
 			
-			//On vide les donnees du tableau et on le reremplit
-			controller.clearAll();
-			controller.initData();
+			this.selectedItem = produit;
 			
 			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 			Stage stage = (Stage) btnModif.getScene().getWindow();
 			stage.close();
-			
-			URL fxmlURL2=getClass().getResource("/fxml/Main.fxml");
-			FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
-			Node root2 = fxmlLoader2.load();
-			//Et on rouvre la fenetre Main.fxml avec les nouvelles donnees
-			Scene scene = new Scene((AnchorPane) root2, 700, 440);
-			nStage.setScene(scene);
-			nStage.setResizable(false);
-			nStage.show();
 		}
 		catch (Exception e) {
 			this.lblAffichage.setTextFill(Color.RED);
 			this.lblAffichage.setText(e.getMessage());
 		}
+	}
+
+	public Produit getSelectedItem() {
+		return selectedItem;
 	}
 }

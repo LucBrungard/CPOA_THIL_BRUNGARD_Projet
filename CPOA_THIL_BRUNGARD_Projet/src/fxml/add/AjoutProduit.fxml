@@ -69,7 +69,7 @@
                         <Insets />
                      </FlowPane.margin>
                   </Button>
-                  <Label fx:id="lblAffichage" alignment="CENTER" contentDisplay="CENTER" text="Label" textAlignment="CENTER">
+                  <Label fx:id="lblAffichage" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding></Label>
