@@ -55,9 +55,9 @@ public class PageProduitController implements Initializable {
 	@SuppressWarnings("unused")
 	private MainController main;
 	private Produit produit;
-	
 	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
 	
+	//Initialisation des donnees + ajout des listeners
 	public void initData() {
 		this.nomProduit.setCellValueFactory(new PropertyValueFactory<>("nom"));
 		this.tarifProduit.setCellValueFactory(new PropertyValueFactory<>("tarif"));
@@ -72,10 +72,10 @@ public class PageProduitController implements Initializable {
 		try {
 			this.tabProduit.getItems().addAll(produitDAO.findAll());
 		} catch (Exception e) {
-			// TODO Bloc catch généré automatiquement
 			e.printStackTrace();
 		}
 		
+		//Definit si les boutons sont desactives ou non
 		this.tabProduit.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
 					this.addProduit.setDisable(newValue != null);
@@ -84,6 +84,7 @@ public class PageProduitController implements Initializable {
 					this.produit = tabProduit.getSelectionModel().getSelectedItem();
 				});
 		
+		//event qui annule la selection actuelle de la tableView si on selectionne une ligne vide
 		this.tabProduit.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
 		    Node source = evt.getPickResult().getIntersectedNode();
 		   
@@ -113,6 +114,7 @@ public class PageProduitController implements Initializable {
 		main = mainController;
 	}
 	
+	//Renvoie une liste des produits qui possedent un nom correspondant a la demande
 	public ArrayList<Produit> filtrerNom() {
 		String nom = searchNom.getText().trim().toLowerCase();
 		ArrayList<Produit> listeProd = new ArrayList<Produit>();
@@ -133,6 +135,7 @@ public class PageProduitController implements Initializable {
 		return listeProd;
 	}
 	
+	//Renvoie une liste des produits qui possedent un tarif correspondant a la demande
 	public ArrayList<Produit> filtrerTarif() {
 		ArrayList<Produit> listeProd = new ArrayList<Produit>();
 		float tarif = 0;
@@ -162,6 +165,7 @@ public class PageProduitController implements Initializable {
 		return listeProd;
 	}
 	
+	//Renvoie une liste des produits qui possedent un titre de categorie correspondant a la demande
 	public ArrayList<Produit> filtrerCateg() {
 		String categ = searchCateg.getText().trim().toLowerCase();
 		ArrayList<Produit> listeProd = new ArrayList<Produit>();
@@ -183,6 +187,7 @@ public class PageProduitController implements Initializable {
 		return listeProd;
 	}
 	
+	//renvoie la liste la plus longue
 	private ArrayList<Produit> max(ArrayList<Produit> l1, ArrayList<Produit> l2, ArrayList<Produit> l3) {
 		if (l1.size() >= l2.size() && l1.size() >= l3.size())
 			return l1;
@@ -193,6 +198,7 @@ public class PageProduitController implements Initializable {
 		return l3;
 	}
 	
+	//Rassemble toute les listes des donnees filtrees et fait un ET exclusif des donnees
 	public void filtrer() {
 		ArrayList<Produit> prodNom = filtrerNom();
 		ArrayList<Produit> prodTarif = filtrerTarif();
@@ -227,6 +233,7 @@ public class PageProduitController implements Initializable {
 		tabProduit.getItems().addAll(listeProduitMino);
 	}
 	
+	//Charge la page AJoutProduit et recupere les donnees pour les ajouter dans le tableau
 	public void ajoutProd() {
 		Stage nStage = new Stage();
 		try {
@@ -254,6 +261,7 @@ public class PageProduitController implements Initializable {
 		}
 	}
 	
+	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
 	public void modifProd() {
 		Stage nStage = new Stage();
 		try {
@@ -286,7 +294,9 @@ public class PageProduitController implements Initializable {
 		}
 	}
 	
+	//Supprime la valeur dans le tableau et dans la dao
 	public void supprProd() {
+		//Ouvre une fenetre d'alerte pour confirer la suppresion
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
 		alert.setContentText("Etes vous certain de supprimer ce produit ?");
@@ -298,16 +308,11 @@ public class PageProduitController implements Initializable {
 				tabProduit.getSelectionModel().clearSelection();
 			} 
 			catch(Exception e) {
-				System.out.println(e.getMessage());
+				e.printStackTrace();
 			}
 		}	
 		else {
 			tabProduit.getSelectionModel().clearSelection();
 		}
-	}
-
-
-	public void clearAll() {
-		this.tabProduit.getItems().clear();
 	}
 }

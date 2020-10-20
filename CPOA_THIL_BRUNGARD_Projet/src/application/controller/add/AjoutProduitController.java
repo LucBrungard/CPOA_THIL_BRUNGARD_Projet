@@ -28,7 +28,6 @@ public class AjoutProduitController implements Initializable{
 	@FXML private TextArea editDesc; 
 	@FXML private TextField editTarif;
 	@FXML private ChoiceBox<Categorie> cbxCategorie;
-	ObservableList<Categorie> listeCateg = FXCollections.observableArrayList();
 	
 	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
 	CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
@@ -36,6 +35,7 @@ public class AjoutProduitController implements Initializable{
 	
 	@Override
     public void initialize(URL location, ResourceBundle resources) {
+		ObservableList<Categorie> listeCateg = FXCollections.observableArrayList();
 	    try {
 	    	this.editNom.setText("");
 	    	this.editDesc.setText("");
@@ -72,6 +72,8 @@ public class AjoutProduitController implements Initializable{
 			this.lblAffichage.setText(e.getMessage());
 		}
 		
+		//On creer le produit. Si erreur, elle sera affichee dans le label a cet effet
+		//On enregistre l'instance de produit que l'on vient de creer pour la recuperer sur la page PageProduitController
 		try {
 			//On creer dans la DAO l'objet Produit
 			Produit produit = new Produit(1, nom, desc, tarif, nom.concat(".png"), idCateg);

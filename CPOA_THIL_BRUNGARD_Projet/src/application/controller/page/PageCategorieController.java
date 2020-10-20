@@ -33,8 +33,6 @@ import javafx.stage.Stage;
 import modele.Categorie;
 
 public class PageCategorieController implements Initializable {
-	private Categorie categorie;
-	
 	@FXML private TableView<Categorie> tabCateg;
 	@FXML private TableColumn<Categorie, String> titreCateg = new TableColumn<Categorie, String>("Titre");
 	@FXML private TableColumn<Categorie, String> visuelCateg = new TableColumn<Categorie, String>("Visuel");
@@ -47,7 +45,7 @@ public class PageCategorieController implements Initializable {
 	
 	@SuppressWarnings("unused")
 	private MainController main;
-	
+	private Categorie categorie;
 	CategorieDAO categDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
 	
 	//Instancie la classe MainController
@@ -64,6 +62,7 @@ public class PageCategorieController implements Initializable {
 		this.titreCateg.setCellValueFactory(new PropertyValueFactory<Categorie, String>("titre"));
 		this.visuelCateg.setCellValueFactory(new PropertyValueFactory<Categorie, String>("visuel"));
 		
+		//Listener qui definit si les boutons sont desactives ou non
 		this.tabCateg.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
 					this.addCateg.setDisable(newValue != null);
@@ -72,6 +71,7 @@ public class PageCategorieController implements Initializable {
 					this.categorie = this.tabCateg.getSelectionModel().getSelectedItem();
 				});
 		
+		//evenement qui permet d'enlever la selection actuelle dans la tableView si on clique sur une ligne vide 
 		this.tabCateg.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
 		    Node source = evt.getPickResult().getIntersectedNode();
 		   
@@ -86,10 +86,10 @@ public class PageCategorieController implements Initializable {
 		    }
 		});
 		
+		//On remplit le tableau des donnees necessaires
 		try {
 			this.tabCateg.getItems().addAll(categDAO.findAll());
 		} catch (Exception e) {
-			// TODO Bloc catch genere automatiquement
 			e.printStackTrace();
 		}
 	}
@@ -101,12 +101,6 @@ public class PageCategorieController implements Initializable {
 	}
 	
 	
-	//On vide les donnees du tableau
-	public void clearAll() {
-		this.tabCateg.getItems().clear();
-	}
-	
-	
 	//Fonction appelee lors du clic sur le bouton Ajout
 	public void ajoutCateg() {
 		Stage nStage = new Stage();
@@ -115,6 +109,8 @@ public class PageCategorieController implements Initializable {
 			URL fxmlURL=getClass().getResource("/fxml/add/AjoutCategorie.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
+			
+			//On recupere le controlleur de la classe AjoutCategorie.fxml
 			AjoutCategorieController controller = fxmlLoader.getController();
 			
 			//On affiche la fenetre ModifCateg
@@ -131,7 +127,6 @@ public class PageCategorieController implements Initializable {
 			//on recupere l'objet que l'on vient de creer et on l'ajoute dans le tableau
 			if (controller.getCategorie() != null) 
 				this.tabCateg.getItems().add(controller.getCategorie());
-			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -141,6 +136,7 @@ public class PageCategorieController implements Initializable {
 	
 	//Fonction appelee lors du clic sur le bouton Supprimer
 	public void supprCateg() {
+		//Ouverture d'une page d'alerte pour confirmer la suppression
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
 		alert.setContentText("Etes vous certain de supprimer cette categorie ?");
@@ -193,7 +189,7 @@ public class PageCategorieController implements Initializable {
 		}
 	}
 	
-	
+	//Fonction qui renvoie la liste des categorie possedant un titre correspondant a la demande
 	public ObservableList<Categorie> filtrerTitre() {
 		ObservableList<Categorie> listeCateg = FXCollections.observableArrayList();
 		
@@ -216,6 +212,7 @@ public class PageCategorieController implements Initializable {
 		return listeCateg;
 	}
 	
+	//Fonction qui renvoie la liste des categorie possedant un visuel correspondant a la demande
 	public ObservableList<Categorie> filtrerVisuel() {
 		ObservableList<Categorie> listeCateg = FXCollections.observableArrayList();
 		
@@ -237,18 +234,21 @@ public class PageCategorieController implements Initializable {
 		return listeCateg;
 	}
 	
+	//Renvoie la liste la plus longue
 	private ObservableList<Categorie> max(ObservableList<Categorie> l1, ObservableList<Categorie>l2) {
 		if (l1.size() > l2.size())
 			return l1;
 		return l2;
 	}
 	
+	//Renvoie la liste la plus courte
 	private ObservableList<Categorie> min(ObservableList<Categorie> l1, ObservableList<Categorie>l2) {
 		if (l1.size() > l2.size())
 			return l2;
 		return l1;
 	}
 	
+	//regroupe toutes les listes des donnees filtree et en fait un ET exclusif 
 	public void filtrer() {
 		ObservableList<Categorie> l1 = filtrerTitre();
 		ObservableList<Categorie> l2 = filtrerVisuel();

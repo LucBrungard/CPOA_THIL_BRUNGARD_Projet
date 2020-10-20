@@ -36,6 +36,7 @@ public class AjoutCategorieController implements Initializable {
 		
 	}
 	
+	//On recupere instance de categorie creee pour la recuperer sur la page PageCategorieController
 	public void creerCateg() {
 		String titre = this.editTitre.getText().trim();
 		String visuel = this.editVisuel.getText().trim();
