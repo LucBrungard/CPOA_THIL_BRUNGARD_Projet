@@ -241,6 +241,7 @@ public class PageCategorieController implements Initializable {
 		return l2;
 	}
 	
+	
 	//Renvoie la liste la plus courte
 	private ObservableList<Categorie> min(ObservableList<Categorie> l1, ObservableList<Categorie>l2) {
 		if (l1.size() > l2.size())
