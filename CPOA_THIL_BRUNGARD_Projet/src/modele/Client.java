@@ -16,6 +16,7 @@ public class Client {
 		this.setId(id);
 		this.setNom(nom);
 		this.setPrenom(prenom);
+		this.setNumero(numero);
 		this.setRue(rue);
 		this.setCodePostal(codePostal);
 		this.setVille(ville);

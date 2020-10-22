@@ -1,11 +1,13 @@
 package application.controller.page;
 
 import java.net.URL;
+
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.controller.MainController;
 import application.controller.add.AjoutClientController;
+import application.controller.detail.DetailClientController;
 import application.controller.edit.EditClientController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
@@ -166,6 +168,37 @@ public class PageClientController implements Initializable {
 		}
 	}
 	
+	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	public void detailClient() {
+		Stage nStage = new Stage();
+		try {
+			//On charge l'url de la page ModifCateg.fxml
+			URL fxmlURL=getClass().getResource("/fxml/detail/DetailClient.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+			Node root = fxmlLoader.load();
+			
+			//On recupere le controleur de la page ModifCateg.fxml
+			DetailClientController controller = fxmlLoader.getController();
+			
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			controller.initData(tabClient.getSelectionModel().getSelectedItem());
+			
+			//On affiche la fenetre ModifCateg
+			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Détail d'un client");
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			nStage.showAndWait();
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+	
 	//Supprime la valeur dans le tableau et dans la dao
 	public void supprClient() {
 		//Ouvre une fenetre d'alerte pour confirer la suppresion
@@ -175,6 +208,7 @@ public class PageClientController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
+				System.out.println(client); 
 				clientDAO.delete(client); 
 				tabClient.getItems().remove(client);
 				tabClient.getSelectionModel().clearSelection();
