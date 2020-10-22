@@ -62,7 +62,6 @@ public class AjoutClientController implements Initializable {
 				DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().create(client); 
 				this.clientAjout = client;
 				this.lblAffichage.setText(client.toStringUtilisateur()); 
-				System.out.println(client.toString());
 							
 				//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 				Stage stage = (Stage) btnCreer.getScene().getWindow();
