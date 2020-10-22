@@ -1,22 +1,30 @@
 package application.controller.page;
 
 import java.net.URL;
+
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 import application.controller.MainController;
+import application.controller.add.AjoutCommandeController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CommandeDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import modele.Commande;
 
@@ -33,6 +41,7 @@ public class PageCommandeController implements Initializable {
 	@FXML private Button searchCommande;
 	@FXML private Button detailCommande;
 	
+	@SuppressWarnings("unused")
 	private MainController main;
 	
 	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
@@ -70,5 +79,35 @@ public class PageCommandeController implements Initializable {
 	public void init(MainController mainController) {
 		main = mainController;
 		
+	}
+	
+	//Charge la page AJoutProduit et recupere les donnees pour les ajouter dans le tableau
+	public void ajoutCommande() {
+		Stage nStage = new Stage();
+		try {
+			//On charge l'url de la page AjoutProduit.fxml
+			URL fxmlURL=getClass().getResource("/fxml/add/AjoutCommande.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+			Node root = fxmlLoader.load();
+			
+			//On recupere le controleur de la page ModifCateg.fxml
+			AjoutCommandeController controller = fxmlLoader.getController();
+			
+			//On affiche la fenetre AjoutProduit
+			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Creer une commande");
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			nStage.showAndWait();
+			
+			if (controller.getCommandeAjout() != null)
+				tabCommande.getItems().add(controller.getCommandeAjout());
+			System.out.println(controller.getCommandeAjout());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		 
 	}
 }

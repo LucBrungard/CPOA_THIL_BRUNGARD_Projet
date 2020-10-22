@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.add.AjoutCommandeController">
+   <children>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="350.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <GridPane prefHeight="244.0" prefWidth="580.0" vgap="10.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="351.0" minWidth="10.0" prefWidth="101.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="479.0" minWidth="10.0" prefWidth="479.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <TextField fx:id="editDate" maxWidth="-Infinity" prefHeight="31.0" prefWidth="100.0" promptText="jj/mm/aaaa" GridPane.columnIndex="1" />
+                  <TextField fx:id="editQuantite" maxWidth="-Infinity" prefHeight="31.0" prefWidth="55.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text="Date  :">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <Label text="Client :" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <Label text="Produit : " GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label text="Quantité :" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <ChoiceBox fx:id="cbxClient" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ChoiceBox fx:id="cbxProduit" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </GridPane>
+            <Button fx:id="btnCreer" mnemonicParsing="false" onAction="#ajoutCommande" text="Créer" />
+            <Label fx:id="lblAffichage" text="Label" />
+            <Label fx:id="lblAffichage" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>
