@@ -2,6 +2,7 @@ package application.controller.add;
 
 import java.net.URL;
 
+
 import java.util.ResourceBundle;
 
 import dao.Persistance;
@@ -12,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import modele.Client;
 
 public class AjoutClientController implements Initializable {
@@ -24,6 +26,8 @@ public class AjoutClientController implements Initializable {
 	@FXML private TextField editCodePostal;
 	@FXML private TextField editVille;
 	@FXML private TextField editPays;
+	
+	private Client clientAjout; 
 	
 	@Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,49 +54,30 @@ public class AjoutClientController implements Initializable {
     	String pays = editPays.getText().trim();
 		String erreur="";
 		
-		
-//		//on convertit le tarif qui est en String en int 
-//		try {
-//			tarif = Float.parseFloat(editTarif.getText().trim());
-//		}
-//		catch (NumberFormatException e) {
-//		}
-//		
-//		if (nom.isEmpty()) {
-//			erreur = erreur + "\nLe nom est vide";
-//		}
-//		if (desc.isEmpty()) {
-//			erreur = erreur + "\nLa description est vide";
-//		}
-//		if (tarif <= 0) {
-//			erreur = erreur + "\nVeuillez saisir un tarif raisonnable";
-//		}
-//		if (selectItem == null) {
-//			erreur = erreur + "\nVeuillez selectionner une categorie";
-//		}
-//		
-//		if (erreur != "") {
-//			this.lblAffichage.setTextFill(Color.web("#bb0b0b"));
-//			this.lblAffichage.setText(erreur);
-//		}
-//		else {
-		
-			//on creer une instance de produit 
+		//on creer une instance de produit 
 		this.lblAffichage.setTextFill(Color.web("#000000"));
 			
 			try {
-				Client c1 = new Client(1, nom, prenom, numero, rue, codePostal, ville, pays);
-				DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().create(c1); 
-				this.lblAffichage.setText(c1.toStringUtilisateur()); 
-				System.out.println(c1.toString());
+				Client client = new Client(1, nom, prenom, numero, rue, codePostal, ville, pays);
+				DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().create(client); 
+				this.clientAjout = client;
+				this.lblAffichage.setText(client.toStringUtilisateur()); 
+				System.out.println(client.toString());
+							
+				//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
+				Stage stage = (Stage) btnCreer.getScene().getWindow();
+				stage.close();
 					
 			} catch (Exception e) {
 				erreur = e.getMessage();
 				this.lblAffichage.setText(erreur);
 				this.lblAffichage.setTextFill(Color.web("#000000"));
 			} 
-			initialize(null, null);
-			this.lblAffichage.setTextFill(Color.web("#000000"));
 			
 	}
+
+	public Client getClientAjout() {
+		return clientAjout;
+	}
+			
 }
