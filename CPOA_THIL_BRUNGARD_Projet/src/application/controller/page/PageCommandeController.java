@@ -1,16 +1,20 @@
 package application.controller.page;
 
 import java.net.URL;
-
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.controller.MainController;
 import application.controller.add.AjoutCommandeController;
 //import application.controller.detail.DetailClientController;
 import application.controller.detail.DetailCommandeController;
+import application.controller.edit.EditCommandeController;
+import application.controller.edit.EditProduitController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
+import dao.modele.ClientDAO;
 import dao.modele.CommandeDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
@@ -19,16 +23,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import modele.Commande;
+import modele.LigneCommande;
 
 public class PageCommandeController implements Initializable {
 	
@@ -45,8 +54,10 @@ public class PageCommandeController implements Initializable {
 	
 	@SuppressWarnings("unused")
 	private MainController main;
+	private Commande commande; 
 	
 	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
+	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -55,7 +66,12 @@ public class PageCommandeController implements Initializable {
 		this.dateCommande.setCellValueFactory(new PropertyValueFactory<>("date"));
 		this.clientCommande.setCellValueFactory(new Callback<CellDataFeatures<Commande, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<Commande, String> p) {
-				return new ReadOnlyStringWrapper(p.getValue().getNomClient());
+				try {
+					return new ReadOnlyStringWrapper(clientDAO.getById(p.getValue().getIdClient()).getNom());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
 			}
 		});
 		
@@ -68,6 +84,7 @@ public class PageCommandeController implements Initializable {
 		
 		this.tabCommande.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
+					this.commande = tabCommande.getSelectionModel().getSelectedItem();
 					this.deleteCommande.setDisable(newValue == null);
 					this.editCommande.setDisable(newValue == null);
 					this.detailCommande.setDisable(newValue == null);
@@ -92,7 +109,7 @@ public class PageCommandeController implements Initializable {
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxml
+			//On recupere le controleur de la page ModifCateg.fxProduitml
 			AjoutCommandeController controller = fxmlLoader.getController();
 			
 			//On affiche la fenetre AjoutProduit
@@ -115,7 +132,9 @@ public class PageCommandeController implements Initializable {
 	
 	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
 	public void detailCommande() {
-		Stage nStage = new Stage();
+	
+	
+		Stage nStage = new Stage(); 
 		try {
 			//On charge l'url de la page ModifCateg.fxml
 			URL fxmlURL=getClass().getResource("/fxml/detail/DetailCommande.fxml");
@@ -141,5 +160,92 @@ public class PageCommandeController implements Initializable {
 			e.printStackTrace();
 		}
 	}
+	
+	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	public void modifCommande() {
+		Stage nStage = new Stage();
+		try {
+			//On charge l'url de la page ModifCateg.fxml
+			URL fxmlURL=getClass().getResource("/fxml/edit/ModifCommande.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+			Node root = fxmlLoader.load();
+			
+			//On recupere le controleur de la page ModifCateg.fxml
+			EditCommandeController controller = fxmlLoader.getController();
+			
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			controller.initData(tabCommande.getSelectionModel().getSelectedItem());
+			
+			//On affiche la fenetre ModifCateg
+			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Modififer une commande");
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			nStage.showAndWait();
+			
+			//On modifie l'objet dans le tableau
+			tabCommande.getItems().set(
+					tabCommande.getItems().indexOf(controller.getSelectedItem()), 
+					controller.getSelectedItem());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	//Supprime la valeur dans le tableau et dans la dao
+	public void supprCommande() {
+		//Ouvre une fenetre d'alerte pour confirer la suppresion
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Alerte suppression");
+		alert.setContentText("Etes vouloir supprimer cette commande qui est composée d'un ou plusieurs produits ?");
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK){
+			try {
+				System.out.println(commande);
+				for (Map.Entry mapentry : commande.getLigneCommande().entrySet()) {
+					DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO().delete((LigneCommande) mapentry.getValue());
+		        }
+				commandeDAO.delete(commande);
+				tabCommande.getItems().remove(commande);
+				tabCommande.getSelectionModel().clearSelection();
+			} 
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}	
+		else {
+			tabCommande.getSelectionModel().clearSelection();
+		}
+	}
+	
+	/*
+	tabViewClient.setOnMouseClicked(event -> {
+		if (event.getClickCount() == 2) {
+
+			try {
+				URL fxmlURL = getClass().getResource("/fxml/DetailAdresseClient.fxml");
+				FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+				Parent root = fxmlLoader.load();
+
+				Stage stage = new Stage();
+				String nomPrenom = tabViewClient.getSelectionModel().getSelectedItem().getNom()
+						.concat(" " + tabViewClient.getSelectionModel().getSelectedItem().getPrenom());
+
+				CtrlDetailAdresseClient controleur = fxmlLoader.getController();
+				controleur.initDonnees(tabViewClient.getSelectionModel().getSelectedItem());
+
+				stage.initModality(Modality.NONE);
+				stage.setTitle("Detail de l'adresse de " + nomPrenom);
+				stage.setScene(new Scene(root, 600, 400));
+				stage.show();
+			} catch (IOException e) {
+				e.getMessage();
+			}
+
+		}
+	});*/
 		
 }

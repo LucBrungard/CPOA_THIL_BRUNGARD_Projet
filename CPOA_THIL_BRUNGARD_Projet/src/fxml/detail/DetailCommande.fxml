@@ -42,15 +42,6 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="detailCommande" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0">
-                     <graphic>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../image/details.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
                </children>
             </VBox>
             <TableView fx:id="tabLigneCommande" cache="true" fixedCellSize="23.0" minWidth="515.0" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">

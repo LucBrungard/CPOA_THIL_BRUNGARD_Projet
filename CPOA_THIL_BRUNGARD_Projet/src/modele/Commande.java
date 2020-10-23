@@ -48,16 +48,6 @@ public class Commande {
 			this.idClient = idClient;
 	}
 	
-	public String getNomClient() {
-		try {
-			return DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().getById(idClient).getNom();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	public HashMap<Produit, LigneCommande> getLigneCommande() {
 		return ligneCommande;
 	}
