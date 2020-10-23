@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane minHeight="400.0" minWidth="950.0" prefHeight="400.0" prefWidth="700.0" stylesheets="@../../css/pageCss.css" xmlns="http://javafx.com/javafx/8.0.202" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.page.PageClientController">
+<AnchorPane minHeight="400.0" minWidth="900.0" prefHeight="400.0" prefWidth="700.0" stylesheets="@../../css/pageCss.css" xmlns="http://javafx.com/javafx/8.0.202" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.page.PageClientController">
    <children>
-      <HBox minHeight="400.0" minWidth="950.0" prefHeight="400.0" prefWidth="700.0">
+      <HBox minHeight="400.0" minWidth="900.0" prefHeight="400.0" prefWidth="700.0">
          <children>
             <VBox fx:id="vbox_options4" alignment="CENTER" minWidth="100.0" spacing="20.0">
                <children>
@@ -55,7 +55,7 @@
                   </Button>
                </children>
             </VBox>
-            <VBox minWidth="850.0">
+            <VBox minWidth="800.0">
                <children>
                   <HBox minHeight="40.0" prefHeight="50.0" prefWidth="200.0">
                      <children>
