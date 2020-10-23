@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 
 import application.controller.MainController;
 import application.controller.add.AjoutCommandeController;
+//import application.controller.detail.DetailClientController;
+import application.controller.detail.DetailCommandeController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CommandeDAO;
@@ -110,4 +112,34 @@ public class PageCommandeController implements Initializable {
 		}
 		 
 	}
+	
+	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	public void detailCommande() {
+		Stage nStage = new Stage();
+		try {
+			//On charge l'url de la page ModifCateg.fxml
+			URL fxmlURL=getClass().getResource("/fxml/detail/DetailCommande.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+			Node root = fxmlLoader.load();
+			
+			//On recupere le controleur de la page ModifCateg.fxml
+			DetailCommandeController controller = fxmlLoader.getController();
+			
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			controller.initData(tabCommande.getSelectionModel().getSelectedItem().getId());
+			
+			//On affiche la fenetre ModifCateg
+			Scene scene = new Scene((AnchorPane) root, 600, 400);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Detail d'une commande");
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			nStage.showAndWait();
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+		
 }

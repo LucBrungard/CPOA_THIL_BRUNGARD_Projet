@@ -57,10 +57,8 @@ public class ListeMemoireCommandeDAO implements CommandeDAO{
 		
 		try {
 			DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().getById(objet.getIdClient());
-			
 		} catch (IllegalArgumentException e) {
 			ok = false;
-			//System.out.println(e.getMessage());
 		}
 		
 		if (ok)
