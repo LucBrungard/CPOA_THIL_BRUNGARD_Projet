@@ -126,6 +126,19 @@ public class ListeMemoireProduitDAO implements ProduitDAO {
 			return this.donnees.get(idx);
 		}
 	}
+	
+	public int getQuantiteCommandee(int idProduit) {
+		int quantite = 0;
+		try {
+			for (modele.LigneCommande ligneCom : DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO().findAll()) {
+				if (ligneCom.getIdProduit() == idProduit)
+					quantite += ligneCom.getQuantite();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return quantite;
+	}
 
 	@Override
 	public ArrayList<Produit> findAll() {
