@@ -1,16 +1,20 @@
 package application.controller.detail;
 
 import java.net.URL;
-
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Map.Entry;
 
 import application.controller.MainController;
 import application.controller.add.AjoutLigneCommandeController;
+import application.controller.edit.EditLigneCommandeController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CommandeDAO;
+import dao.modele.LigneCommandeDAO;
 import dao.modele.ProduitDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
@@ -18,9 +22,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -29,6 +36,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import modele.Commande;
 import modele.LigneCommande;
+import modele.Produit;
 
 public class DetailCommandeController {
 	
@@ -45,8 +53,10 @@ public class DetailCommandeController {
 	@SuppressWarnings("unused")
 	private MainController main;
 	private Commande commande; 
+	private LigneCommande selectedItem; 
 	
 	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
+	LigneCommandeDAO<LigneCommande> ligneCommandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO();
 	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
 	
 	public void initialize(URL location, ResourceBundle resources) {
@@ -128,6 +138,74 @@ public class DetailCommandeController {
 			e.printStackTrace();
 		}
 		 
+	}
+	
+	
+	//Supprime la valeur dans le tableau et dans la dao
+	public void supprLigneCommande() {
+		//Ouvre une fenetre d'alerte pour confirer la suppresion
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Alerte suppression");
+		alert.setContentText("Etes vouloir supprimer cette ligne de commande");
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK){
+			try {
+				selectedItem = tabLigneCommande.getSelectionModel().getSelectedItem(); 
+				HashMap<Produit, LigneCommande> newLigneCommande = commande.getLigneCommande(); 
+				Iterator<Entry<Produit, LigneCommande>> iterator = newLigneCommande.entrySet().iterator();
+				while (iterator.hasNext()) {
+					@SuppressWarnings("rawtypes")
+					Map.Entry mapEntry = (Map.Entry) iterator.next();
+					if ((LigneCommande) mapEntry.getValue() == selectedItem) iterator.remove();
+					
+				}
+				Commande c = new Commande(commande.getId(), commande.getDate(), commande.getIdClient(), newLigneCommande);
+				commandeDAO.update(c); 
+				System.out.println(selectedItem);
+				ligneCommandeDAO.delete(selectedItem);
+				tabLigneCommande.getItems().remove(selectedItem);
+				tabLigneCommande.getSelectionModel().clearSelection();
+			} 
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}	
+		else {
+			tabLigneCommande.getSelectionModel().clearSelection();
+		}
+	}
+	
+	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	public void modifLigneCommande() {
+		Stage nStage = new Stage();
+		try {
+			//On charge l'url de la page ModifCateg.fxml
+			URL fxmlURL=getClass().getResource("/fxml/edit/ModifLigneCommande.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+			Node root = fxmlLoader.load();
+			
+			//On recupere le controleur de la page ModifCateg.fxml
+			EditLigneCommandeController controller = fxmlLoader.getController();
+			
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			controller.initData(tabLigneCommande.getSelectionModel().getSelectedItem(), commande);
+			
+			//On affiche la fenetre ModifCateg
+			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Modifier une ligne de commande");
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			nStage.showAndWait();
+			
+			//On modifie l'objet dans le tableau
+			tabLigneCommande.getItems().set(
+					tabLigneCommande.getItems().indexOf(controller.getSelectedItem()), 
+					controller.getSelectedItem());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
