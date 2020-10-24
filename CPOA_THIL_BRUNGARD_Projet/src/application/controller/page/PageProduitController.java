@@ -10,8 +10,11 @@ import application.controller.add.AjoutProduitController;
 import application.controller.edit.EditProduitController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
+import dao.modele.CategorieDAO;
+import dao.modele.LigneCommandeDAO;
 import dao.modele.ProduitDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,15 +38,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import modele.LigneCommande;
 import modele.Produit;
 
 public class PageProduitController implements Initializable {
 	
 	@FXML private TableView<Produit> tabProduit;
-	@FXML private TableColumn<Produit, String> nomProduit = new TableColumn<Produit, String>("Nom");
-	@FXML private TableColumn<Produit, Float> tarifProduit = new TableColumn<Produit, Float>("Tarif");
-	@FXML private TableColumn<Produit, String> visuelProduit = new TableColumn<Produit, String>("Visuel");
-	@FXML private TableColumn<Produit, String> categProduit = new TableColumn<Produit, String>("Categorie");
 	
 	@FXML private Button addProduit;
 	@FXML private Button deleteProduit;
@@ -55,26 +55,13 @@ public class PageProduitController implements Initializable {
 	@SuppressWarnings("unused")
 	private MainController main;
 	private Produit produit;
-	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
+	private ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
+	private CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
+	private LigneCommandeDAO<LigneCommande> ligneCommandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO();
+	
 	
 	//Initialisation des donnees + ajout des listeners
 	public void initData() {
-		this.nomProduit.setCellValueFactory(new PropertyValueFactory<>("nom"));
-		this.tarifProduit.setCellValueFactory(new PropertyValueFactory<>("tarif"));
-		this.visuelProduit.setCellValueFactory(new PropertyValueFactory<>("visuel"));
-		//Comme titreCateg n'est pas attribut de Produit, on créer une méthode getTitreCateg et on dit a la colonne d'utiliser cette methode
-		this.categProduit.setCellValueFactory(new Callback<CellDataFeatures<Produit, String>, ObservableValue<String>>() {
-			public ObservableValue<String> call(CellDataFeatures<Produit, String> p) {
-				return new ReadOnlyStringWrapper(p.getValue().getTitreCateg());
-			}
-		});
-		
-		try {
-			this.tabProduit.getItems().addAll(produitDAO.findAll());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
 		//Definit si les boutons sont desactives ou non
 		this.tabProduit.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
@@ -101,7 +88,60 @@ public class PageProduitController implements Initializable {
 		
 		this.deleteProduit.setDisable(true);
 		this.editProduit.setDisable(true);
+			
+		TableColumn<Produit, String> nomProduit = new TableColumn<Produit, String>("Nom");
+		TableColumn<Produit, Float> tarifProduit = new TableColumn<Produit, Float>("Tarif");
+		TableColumn<Produit, String> visuelProduit = new TableColumn<Produit, String>("Visuel");
+		TableColumn<Produit, String> categProduit = new TableColumn<Produit, String>("Categorie");
+		TableColumn<Produit, Integer> qteCommandee = new TableColumn<Produit, Integer>("Quantitee commandee");
 		
+		nomProduit.setCellValueFactory(new PropertyValueFactory<>("nom"));
+		tarifProduit.setCellValueFactory(new PropertyValueFactory<>("tarif"));
+		visuelProduit.setCellValueFactory(new PropertyValueFactory<>("visuel"));
+		categProduit.setCellValueFactory(new Callback<CellDataFeatures<Produit, String>, ObservableValue<String>>() {
+			public ObservableValue<String> call(CellDataFeatures<Produit, String> p) {
+				System.out.println("okokokokkkk");
+				try {
+					System.out.println(categorieDAO.getById(p.getValue().getIdCateg()).getTitre());
+					return new ReadOnlyStringWrapper( categorieDAO.getById(p.getValue().getIdCateg()).getTitre() );
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		});
+		qteCommandee.setCellValueFactory(new Callback<CellDataFeatures<Produit, Integer>, ObservableValue<Integer>>() {
+			public ObservableValue<Integer> call(CellDataFeatures<Produit, Integer> p) {
+				int quantite = 0;
+				int idProduit = p.getValue().getId();
+				try {
+					for (LigneCommande lc : ligneCommandeDAO.findAll()) {
+						if (lc.getIdProduit() == idProduit) 
+							quantite += lc.getQuantite();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return new SimpleObjectProperty<Integer>(quantite);
+			}
+		});
+		
+		this.tabProduit.getColumns().setAll(nomProduit, tarifProduit,visuelProduit, categProduit, qteCommandee);
+		
+		try {
+			this.tabProduit.getItems().clear();
+			
+			ObservableList<Produit> listeProduit = FXCollections.observableArrayList();
+			for (Produit produit : produitDAO.findAll()) {
+				System.out.println(DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO().getById(produit.getIdCateg()));
+				listeProduit.add(produit);
+			}
+			
+			this.tabProduit.setItems(listeProduit);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -175,7 +215,7 @@ public class PageProduitController implements Initializable {
 			}
 			else {
 				for (Produit produit : produitDAO.findAll()) {
-					if (produit.getTitreCateg().toLowerCase().contains(categ)) {
+					if (categorieDAO.getById(produit.getIdCateg()).getTitre().toLowerCase().contains(categ)) {
 						listeProd.add(produit);
 					}
 				}

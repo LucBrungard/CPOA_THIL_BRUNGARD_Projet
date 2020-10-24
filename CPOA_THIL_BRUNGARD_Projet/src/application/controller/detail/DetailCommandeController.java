@@ -1,5 +1,6 @@
 package application.controller.detail;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,13 +11,16 @@ import java.util.Map.Entry;
 
 import application.controller.MainController;
 import application.controller.add.AjoutLigneCommandeController;
+import application.controller.add.AjoutProduitController;
 import application.controller.edit.EditLigneCommandeController;
+import application.controller.page.PageProduitController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CommandeDAO;
 import dao.modele.LigneCommandeDAO;
 import dao.modele.ProduitDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -133,11 +137,19 @@ public class DetailCommandeController {
 			if (controller.getLigneCommandeAjout() != null)
 				tabLigneCommande.getItems().add(controller.getLigneCommandeAjout());
 			System.out.println(controller.getLigneCommandeAjout());
+			
+			//On charge l'url de la page PageProduit.fxml pour actualiser les quantite
+			URL fxmlURL2=getClass().getResource("/fxml/page/PageProduit.fxml");
+			FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
+			fxmlLoader2.load();
+			
+			//On recupere le controleur de la page PageProduit.fxml
+			PageProduitController controller2 = fxmlLoader2.getController();
+			controller2.initData();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		 
 	}
 	
 	
@@ -165,6 +177,15 @@ public class DetailCommandeController {
 				ligneCommandeDAO.delete(selectedItem);
 				tabLigneCommande.getItems().remove(selectedItem);
 				tabLigneCommande.getSelectionModel().clearSelection();
+				
+				//On charge l'url de la page PageProduit.fxml pour actualiser les quantite
+				URL fxmlURL2=getClass().getResource("/fxml/page/PageProduit.fxml");
+				FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
+				fxmlLoader2.load();
+				
+				//On recupere le controleur de la page PageProduit.fxml
+				PageProduitController controller2 = fxmlLoader2.getController();
+				controller2.initData();
 			} 
 			catch(Exception e) {
 				e.printStackTrace();
@@ -202,6 +223,18 @@ public class DetailCommandeController {
 			tabLigneCommande.getItems().set(
 					tabLigneCommande.getItems().indexOf(controller.getSelectedItem()), 
 					controller.getSelectedItem());
+			
+			
+			//On charge l'url de la page PageProduit.fxml pour actualiser les quantite
+			URL fxmlURL2=getClass().getResource("/fxml/page/PageProduit.fxml");
+			FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
+			Node root2 = fxmlLoader2.load();
+			
+			//On recupere le controleur de la page PageProduit.fxml
+			PageProduitController controller2 = fxmlLoader2.getController();
+			controller2.initialize(null, null);
+			
+		
 		}
 		catch (Exception e) {
 			e.printStackTrace();

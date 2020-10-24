@@ -81,17 +81,6 @@ public class Produit {
 		if (idCateg > 0) this.idCateg = idCateg;
 	}
 	
-	public String getTitreCateg() {
-		try {
-			return (DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO().getById(idCateg).getTitre());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
-	}
-
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

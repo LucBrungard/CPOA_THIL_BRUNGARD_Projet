@@ -91,11 +91,13 @@ public class ListeMemoireProduitDAO implements ProduitDAO {
 			
 			// Ne fonctionne que si l'objet metier est bien fait...
 			int idx = this.donnees.indexOf(objet);
-			if (idx == -1) {
+			if (idx == -1) 
 				throw new IllegalArgumentException("Tentative de modification d'un produit inexistant");
-			} else {
-				
-				this.donnees.set(idx, objet);
+			else {
+				if(!duplicata(objet))
+					this.donnees.set(idx, objet);
+				else 
+					throw new IllegalArgumentException("Ce nom de produit existe deja !");
 			}
 		}
 		else {
