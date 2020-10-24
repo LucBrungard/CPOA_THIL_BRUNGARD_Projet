@@ -1,6 +1,7 @@
 package application.controller.page;
 
 import java.net.URL;
+
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
@@ -8,10 +9,8 @@ import java.util.ResourceBundle;
 
 import application.controller.MainController;
 import application.controller.add.AjoutCommandeController;
-//import application.controller.detail.DetailClientController;
 import application.controller.detail.DetailCommandeController;
 import application.controller.edit.EditCommandeController;
-import application.controller.edit.EditProduitController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.ClientDAO;
@@ -32,7 +31,6 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -196,6 +194,7 @@ public class PageCommandeController implements Initializable {
 	
 	
 	//Supprime la valeur dans le tableau et dans la dao
+	@SuppressWarnings("rawtypes")
 	public void supprCommande() {
 		//Ouvre une fenetre d'alerte pour confirer la suppresion
 		Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -221,31 +220,5 @@ public class PageCommandeController implements Initializable {
 		}
 	}
 	
-	/*
-	tabViewClient.setOnMouseClicked(event -> {
-		if (event.getClickCount() == 2) {
 
-			try {
-				URL fxmlURL = getClass().getResource("/fxml/DetailAdresseClient.fxml");
-				FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
-				Parent root = fxmlLoader.load();
-
-				Stage stage = new Stage();
-				String nomPrenom = tabViewClient.getSelectionModel().getSelectedItem().getNom()
-						.concat(" " + tabViewClient.getSelectionModel().getSelectedItem().getPrenom());
-
-				CtrlDetailAdresseClient controleur = fxmlLoader.getController();
-				controleur.initDonnees(tabViewClient.getSelectionModel().getSelectedItem());
-
-				stage.initModality(Modality.NONE);
-				stage.setTitle("Detail de l'adresse de " + nomPrenom);
-				stage.setScene(new Scene(root, 600, 400));
-				stage.show();
-			} catch (IOException e) {
-				e.getMessage();
-			}
-
-		}
-	});*/
-		
 }

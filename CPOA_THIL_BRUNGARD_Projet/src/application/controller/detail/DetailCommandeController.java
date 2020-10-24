@@ -1,12 +1,13 @@
 package application.controller.detail;
 
 import java.net.URL;
-import java.time.LocalDate;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import application.controller.MainController;
+import application.controller.add.AjoutLigneCommandeController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CommandeDAO;
@@ -14,11 +15,17 @@ import dao.modele.ProduitDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import modele.Commande;
 import modele.LigneCommande;
@@ -37,6 +44,7 @@ public class DetailCommandeController {
 	
 	@SuppressWarnings("unused")
 	private MainController main;
+	private Commande commande; 
 	
 	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
 	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
@@ -60,6 +68,7 @@ public class DetailCommandeController {
 		
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void initData(int i) {
 		this.idProduit.setCellValueFactory(new Callback<CellDataFeatures<LigneCommande, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<LigneCommande, String> p) {
@@ -74,7 +83,7 @@ public class DetailCommandeController {
 		this.quantite.setCellValueFactory(new PropertyValueFactory<>("quantite"));
 		this.prixUnitaire.setCellValueFactory(new PropertyValueFactory<>("prixUnitaire"));
 		
-		Commande commande =null;
+		commande =null;
 		try {
 			commande = commandeDAO.getById(i);
 		} catch (Exception e) {
@@ -87,6 +96,38 @@ public class DetailCommandeController {
 			
 		}
 		
+	}
+	
+	public void ajoutLigneCommande() {
+		Stage nStage = new Stage();
+		try {
+			//On charge l'url de la page AjoutProduit.fxml
+			URL fxmlURL=getClass().getResource("/fxml/add/AjoutLigneCommande.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+			Node root = fxmlLoader.load();
+			
+			//On recupere le controleur de la page ModifCateg.fxtml
+			AjoutLigneCommandeController controller = fxmlLoader.getController();
+			
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			controller.initData(commande);
+			
+			//On affiche la fenetre AjoutProduit
+			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Creer une ligne de commande");
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			nStage.showAndWait();
+			
+			if (controller.getLigneCommandeAjout() != null)
+				tabLigneCommande.getItems().add(controller.getLigneCommandeAjout());
+			System.out.println(controller.getLigneCommandeAjout());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		 
 	}
 	
 }
