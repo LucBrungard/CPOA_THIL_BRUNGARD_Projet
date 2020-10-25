@@ -131,7 +131,6 @@ public class PageCommandeController implements Initializable {
 	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
 	public void detailCommande() {
 	
-	
 		Stage nStage = new Stage(); 
 		try {
 			//On charge l'url de la page ModifCateg.fxml

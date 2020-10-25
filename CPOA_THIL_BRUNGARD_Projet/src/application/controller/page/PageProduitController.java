@@ -53,6 +53,7 @@ public class PageProduitController implements Initializable {
 	@FXML private Button addProduit;
 	@FXML private Button deleteProduit;
 	@FXML private Button editProduit;
+	@FXML private Button actualiser;
 	@FXML private TextField searchNom;
 	@FXML private TextField searchTarif;
 	@FXML private TextField searchCateg;
@@ -64,6 +65,13 @@ public class PageProduitController implements Initializable {
 	private CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
 	private LigneCommandeDAO<LigneCommande> ligneCommandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO();
 	
+	public void actualiser() {
+		try {
+			this.tabProduit.getItems().setAll(produitDAO.findAll());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	//Initialisation des donnees + ajout des listeners
 	public void initData() {
@@ -125,16 +133,10 @@ public class PageProduitController implements Initializable {
 		});
 		
 		try {
+			this.tabProduit.getItems().setAll(produitDAO.findAll());
 			
-			ObservableList<Produit> listeProduit = FXCollections.observableArrayList();
-			for (Produit produit : produitDAO.findAll()) {
-				System.out.println(DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO().getById(produit.getIdCateg()));
-				listeProduit.add(produit);
-			}
-			
-			this.tabProduit.setItems(listeProduit);
-			
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -300,6 +302,10 @@ public class PageProduitController implements Initializable {
 		}
 	}
 	
+	public TableView<Produit> getTabProduit() {
+		return tabProduit;
+	}
+
 	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
 	public void modifProd() {
 		Stage nStage = new Stage();

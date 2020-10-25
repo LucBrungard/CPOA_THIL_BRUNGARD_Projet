@@ -220,6 +220,7 @@ public class DetailCommandeController {
 			tabLigneCommande.getItems().set(
 					tabLigneCommande.getItems().indexOf(controller.getSelectedItem()), 
 					controller.getSelectedItem());
+			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
