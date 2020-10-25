@@ -105,7 +105,6 @@ public class PageProduitController implements Initializable {
 		nomProduit.setCellValueFactory(new PropertyValueFactory<>("nom"));
 		tarifProduit.setCellValueFactory(new PropertyValueFactory<>("tarif"));
 		visuelProduit.setCellValueFactory(new PropertyValueFactory<>("visuel"));
-		categProduit.setCellValueFactory(new PropertyValueFactory<>("categorie"));
 		categProduit.setCellValueFactory(new Callback<CellDataFeatures<Produit, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<Produit, String> p) {
 				try {
@@ -134,17 +133,12 @@ public class PageProduitController implements Initializable {
 		
 		try {
 			this.tabProduit.getItems().setAll(produitDAO.findAll());
-			
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public TableColumn<Produit, String> getCategProduit() {
-		return categProduit;
-	}
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initData();
@@ -300,10 +294,6 @@ public class PageProduitController implements Initializable {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public TableView<Produit> getTabProduit() {
-		return tabProduit;
 	}
 
 	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
