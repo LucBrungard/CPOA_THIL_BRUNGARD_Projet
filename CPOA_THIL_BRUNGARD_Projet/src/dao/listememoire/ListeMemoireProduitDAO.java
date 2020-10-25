@@ -94,8 +94,13 @@ public class ListeMemoireProduitDAO implements ProduitDAO {
 			if (idx == -1) 
 				throw new IllegalArgumentException("Tentative de modification d'un produit inexistant");
 			else {
-				if(!duplicata(objet))
+				//Si le nom n'a pas change alors on modifie
+				if(this.donnees.get(idx).getNom().equals(objet.getNom()))
 					this.donnees.set(idx, objet);
+				//Si le nom a change, on regarde si ce n'est pas un duplicata
+				else if (!duplicata(objet))
+					this.donnees.set(idx, objet);
+				//Sinon on ne peux pas modifier
 				else 
 					throw new IllegalArgumentException("Ce nom de produit existe deja !");
 			}

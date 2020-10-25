@@ -1,8 +1,5 @@
 package modele;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-
 public class Produit {
     private int id ;
     private String nom;
@@ -100,15 +97,4 @@ public class Produit {
 		return "Produit [id=" + id + ", nom=" + nom + ", description=" + description + ", tarif=" + tarif + ", visuel="
 				+ visuel + ", idCateg=" + idCateg + "]";
 	}  
-	
-	public String toStringUtilisateur() {
-		String nomCateg = "";
-		try {
-			nomCateg = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO().getById(idCateg).getTitre();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return nom + " (" + nomCateg + "), " + tarif + " euro";
-	}
 }

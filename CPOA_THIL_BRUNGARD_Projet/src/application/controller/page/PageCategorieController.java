@@ -10,6 +10,7 @@ import application.controller.edit.EditCategorieController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.CategorieDAO;
+import dao.modele.ProduitDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -31,6 +32,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import modele.Categorie;
+import modele.Produit;
 
 public class PageCategorieController implements Initializable {
 	@FXML private TableView<Categorie> tabCateg;
@@ -47,6 +49,7 @@ public class PageCategorieController implements Initializable {
 	private MainController main;
 	private Categorie categorie;
 	CategorieDAO categDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
+	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
 	
 	//Instancie la classe MainController
 	public void init(MainController mainController) {
@@ -136,6 +139,8 @@ public class PageCategorieController implements Initializable {
 	
 	//Fonction appelee lors du clic sur le bouton Supprimer
 	public void supprCateg() {
+		boolean utilise = false;
+		
 		//Ouverture d'une page d'alerte pour confirmer la suppression
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
@@ -143,8 +148,22 @@ public class PageCategorieController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
-				categDAO.delete(categorie);
-				this.tabCateg.getItems().remove(categorie);
+				for (Produit produit : produitDAO.findAll()) {
+					if (produit.getIdCateg() == tabCateg.getSelectionModel().getSelectedItem().getId())
+						utilise = true;
+				}
+				
+				if (utilise) {
+					Alert nonSuppr = new Alert(AlertType.WARNING);
+					nonSuppr.setTitle("Impossibilite de suppression");
+					nonSuppr.setContentText("Vous ne pouvez pas supprimer cette categorie car au moins un produit est issu de celle-ci");
+					nonSuppr.showAndWait();
+				} 
+				else  {
+					categDAO.delete(categorie);
+					this.tabCateg.getItems().remove(categorie);
+				}
+				
 			} 
 			catch(Exception e) {
 				e.printStackTrace();

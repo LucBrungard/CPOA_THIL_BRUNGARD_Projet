@@ -41,7 +41,6 @@ public class Categorie {
 		this.visuel = visuel;
 	}
 	
-	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -62,6 +61,4 @@ public class Categorie {
 	public String toString() {
 		return "Categorie [id=" + id + ", titre=" + titre + ", visuel=" + visuel + "]";
 	}
-	
-	
 }

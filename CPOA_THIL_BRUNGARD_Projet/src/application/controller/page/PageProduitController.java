@@ -331,6 +331,8 @@ public class PageProduitController implements Initializable {
 	
 	//Supprime la valeur dans le tableau et dans la dao
 	public void supprProd() {
+		boolean utilise = false;
+		
 		//Ouvre une fenetre d'alerte pour confirer la suppresion
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
@@ -338,16 +340,26 @@ public class PageProduitController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
-				produitDAO.delete(produit);
-				tabProduit.getItems().remove(produit);
-				tabProduit.getSelectionModel().clearSelection();
+				for (LigneCommande lc : ligneCommandeDAO.findAll()) {
+					if (lc.getIdProduit() == tabProduit.getSelectionModel().getSelectedItem().getId())
+						utilise = true;
+				}
+				
+				if (utilise) {
+					Alert nonSuppr = new Alert(AlertType.WARNING);
+					nonSuppr.setTitle("Impossibilite de suppression");
+					nonSuppr.setContentText("Vous ne pouvez pas supprimer ce produit car il est utilisee dans au moins une commande");
+					nonSuppr.showAndWait();
+				} 
+				else {
+					produitDAO.delete(produit);
+					tabProduit.getItems().remove(produit);
+				}
 			} 
 			catch(Exception e) {
 				e.printStackTrace();
 			}
 		}	
-		else {
-			tabProduit.getSelectionModel().clearSelection();
-		}
+		tabProduit.getSelectionModel().clearSelection();
 	}
 }

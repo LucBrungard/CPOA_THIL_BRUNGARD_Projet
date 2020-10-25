@@ -46,8 +46,11 @@ public class EditCategorieController implements Initializable {
 		
 		try {
 			//On modifie dans la DAO l'objet Categorie
-			this.selectedItem = new Categorie(selectedItem.getId(), titre, visuel);
-			categorieDAO.update(selectedItem);
+			Categorie categorie = new Categorie(selectedItem.getId(), titre, visuel);
+			
+			//Si la modification porte une erreur alors on va dans le catch et "selectedItem" n'est pas modifie
+			categorieDAO.update(categorie);
+			this.selectedItem = categorie;
 			
 			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 			Stage stage = (Stage) btnModif.getScene().getWindow();
