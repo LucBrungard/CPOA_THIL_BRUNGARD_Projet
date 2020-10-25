@@ -44,6 +44,11 @@ import modele.Produit;
 public class PageProduitController implements Initializable {
 	
 	@FXML private TableView<Produit> tabProduit;
+	@FXML private TableColumn<Produit, String> nomProduit = new TableColumn<Produit, String>("Nom");
+	@FXML private TableColumn<Produit, Float> tarifProduit = new TableColumn<Produit, Float>("Tarif");
+	@FXML private TableColumn<Produit, String> visuelProduit = new TableColumn<Produit, String>("Visuel");
+	@FXML private TableColumn<Produit, String> categProduit = new TableColumn<Produit, String>("Categorie");
+	@FXML private TableColumn<Produit, Integer> qteCommandee = new TableColumn<Produit, Integer>("Quantitee commandee");
 	
 	@FXML private Button addProduit;
 	@FXML private Button deleteProduit;
@@ -88,21 +93,14 @@ public class PageProduitController implements Initializable {
 		
 		this.deleteProduit.setDisable(true);
 		this.editProduit.setDisable(true);
-			
-		TableColumn<Produit, String> nomProduit = new TableColumn<Produit, String>("Nom");
-		TableColumn<Produit, Float> tarifProduit = new TableColumn<Produit, Float>("Tarif");
-		TableColumn<Produit, String> visuelProduit = new TableColumn<Produit, String>("Visuel");
-		TableColumn<Produit, String> categProduit = new TableColumn<Produit, String>("Categorie");
-		TableColumn<Produit, Integer> qteCommandee = new TableColumn<Produit, Integer>("Quantitee commandee");
 		
 		nomProduit.setCellValueFactory(new PropertyValueFactory<>("nom"));
 		tarifProduit.setCellValueFactory(new PropertyValueFactory<>("tarif"));
 		visuelProduit.setCellValueFactory(new PropertyValueFactory<>("visuel"));
+		categProduit.setCellValueFactory(new PropertyValueFactory<>("categorie"));
 		categProduit.setCellValueFactory(new Callback<CellDataFeatures<Produit, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<Produit, String> p) {
-				System.out.println("okokokokkkk");
 				try {
-					System.out.println(categorieDAO.getById(p.getValue().getIdCateg()).getTitre());
 					return new ReadOnlyStringWrapper( categorieDAO.getById(p.getValue().getIdCateg()).getTitre() );
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -126,10 +124,7 @@ public class PageProduitController implements Initializable {
 			}
 		});
 		
-		this.tabProduit.getColumns().setAll(nomProduit, tarifProduit,visuelProduit, categProduit, qteCommandee);
-		
 		try {
-			this.tabProduit.getItems().clear();
 			
 			ObservableList<Produit> listeProduit = FXCollections.observableArrayList();
 			for (Produit produit : produitDAO.findAll()) {
@@ -144,6 +139,10 @@ public class PageProduitController implements Initializable {
 		}
 	}
 	
+	public TableColumn<Produit, String> getCategProduit() {
+		return categProduit;
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initData();

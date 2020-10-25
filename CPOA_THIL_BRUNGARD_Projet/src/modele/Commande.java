@@ -4,9 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-
 public class Commande {
 	DateTimeFormatter formatage = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
