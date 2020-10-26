@@ -55,7 +55,7 @@ public class EditLigneCommandeController implements Initializable {
 		
 		try {
 			quantite = Integer.parseInt(editQuantite.getText().trim()); 
-			if (quantite>0) {
+		
 			//On creer dans la DAO l'objet Produit
 				
 			HashMap <Produit, LigneCommande> lc = selectedCommande.getLigneCommande(); 
@@ -71,13 +71,6 @@ public class EditLigneCommandeController implements Initializable {
 			commandeDAO.update(commande);
 			
 			this.selectedItem = ligneCommande;
-			
-			}
-			
-			else {
-				lblAffichage.setText("merci de saisir une quantité valide");
-				lblAffichage.setTextFill(Color.RED);
-			}
 			
 			//On recupere la scene sur laquelle le btnModif est place et on ferme cette fenetre
 			Stage stage = (Stage) btnModif.getScene().getWindow();

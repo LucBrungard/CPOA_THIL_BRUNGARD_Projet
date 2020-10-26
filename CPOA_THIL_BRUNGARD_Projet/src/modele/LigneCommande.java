@@ -46,6 +46,7 @@ public class LigneCommande {
 	public void setQuantite(int quantite) {
 		if (quantite > 0) 
 			this.quantite = quantite;
+		else throw new IllegalArgumentException("Quantité non valide"); 
 	}
 
 

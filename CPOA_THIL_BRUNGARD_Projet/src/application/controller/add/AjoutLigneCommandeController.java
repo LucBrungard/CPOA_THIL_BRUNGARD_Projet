@@ -85,20 +85,20 @@ public class AjoutLigneCommandeController implements Initializable {
 		//On creer le produit. Si erreur, elle sera affichee dans le label a cet effet
 		//On enregistre l'instance de produit que l'on vient de creer pour la recuperer sur la page PageProduitController
 		try {
-			if (quantite>0) {
-				//On creer dans la DAO l'objet Produit
-				LigneCommande ligneCommande = new LigneCommande(selectedItem.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif());
-				ligneCommandeDAO.create(ligneCommande); 
-				
-				LocalDate date = selectedItem.getDate(); 
-				int client = selectedItem.getIdClient(); 
-				HashMap<Produit, LigneCommande> lc = selectedItem.getLigneCommande(); 
-				lc.put(produitDAO.getById(idProduit), ligneCommande); 
-				Commande commande = new Commande(selectedItem.getId(), date, client, lc);
-				commandeDAO.update(commande);
-				
-				this.ligneCommandeAjout = ligneCommande;
-			}
+			
+			//On creer dans la DAO l'objet Produit
+			LigneCommande ligneCommande = new LigneCommande(selectedItem.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif());
+			ligneCommandeDAO.create(ligneCommande); 
+			
+			LocalDate date = selectedItem.getDate(); 
+			int client = selectedItem.getIdClient(); 
+			HashMap<Produit, LigneCommande> lc = selectedItem.getLigneCommande(); 
+			lc.put(produitDAO.getById(idProduit), ligneCommande); 
+			Commande commande = new Commande(selectedItem.getId(), date, client, lc);
+			commandeDAO.update(commande);
+			
+			this.ligneCommandeAjout = ligneCommande;
+		
 			
 			
 			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre

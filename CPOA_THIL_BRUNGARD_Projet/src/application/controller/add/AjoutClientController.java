@@ -60,11 +60,22 @@ public class AjoutClientController implements Initializable {
     	String ville = editVille.getText().trim();
     	String pays = editPays.getText().trim();
 		String erreur="";
+		int cp = 0;
+		int num = 0; 
+		
+		try {
+			cp = Integer.parseInt(codePostal); 
+			num = Integer.parseInt(numero); 
+		} catch (IllegalArgumentException e) {
+			this.lblAffichage.setTextFill(Color.web("#000000"));
+			this.lblAffichage.setText(e.getMessage());
+		}
 		
 		//on creer une instance de produit 
 		this.lblAffichage.setTextFill(Color.web("#000000"));
 			
 			try {
+				if (cp>0 && num>0) {
 				Client client = new Client(1, nom, prenom, identifiant, mdp, numero, rue, codePostal, ville, pays);
 				DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().create(client); 
 				this.clientAjout = client;
@@ -73,6 +84,9 @@ public class AjoutClientController implements Initializable {
 				//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 				Stage stage = (Stage) btnCreer.getScene().getWindow();
 				stage.close();
+				}
+				else if (cp == 0) this.lblAffichage.setText("Code Postal non valide");
+				else this.lblAffichage.setText("Numero non valide");
 					
 			} catch (Exception e) {
 				erreur = e.getMessage();

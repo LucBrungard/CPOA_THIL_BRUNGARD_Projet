@@ -67,7 +67,22 @@ public class EditClientController implements Initializable {
 		String ville = editVille.getText().trim();
 		String pays = editPays.getText().trim();
 		
+		int cp = 0;
+		int num = 0; 
+		
 		try {
+			cp = Integer.parseInt(codePostal); 
+			num = Integer.parseInt(numero); 
+		} catch (IllegalArgumentException e) {
+			this.lblAffichage.setTextFill(Color.web("#000000"));
+			this.lblAffichage.setText(e.getMessage());
+		}
+		
+		
+		try {
+			this.lblAffichage.setTextFill(Color.RED);
+			
+			if (cp>0 && num>0) {
 			//On creer dans la DAO l'objet Produit
 			Client client = new Client(selectedItem.getId(), nom, prenom, identifiant, mdp, numero, rue, codePostal, ville, pays);
 			clientDAO.update(client);
@@ -77,9 +92,12 @@ public class EditClientController implements Initializable {
 			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 			Stage stage = (Stage) btnModif.getScene().getWindow();
 			stage.close();
+			}
+			
+			else if (cp == 0) this.lblAffichage.setText("Code Postal non valide");
+			else this.lblAffichage.setText("Numero non valide");
 		}
 		catch (Exception e) {
-			this.lblAffichage.setTextFill(Color.RED);
 			this.lblAffichage.setText(e.getMessage());
 		}
 	}

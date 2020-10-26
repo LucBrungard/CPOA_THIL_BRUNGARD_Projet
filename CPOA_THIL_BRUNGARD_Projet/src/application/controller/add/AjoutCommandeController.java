@@ -99,27 +99,33 @@ public class AjoutCommandeController implements Initializable {
 		//On creer le produit. Si erreur, elle sera affichee dans le label a cet effet
 		//On enregistre l'instance de produit que l'on vient de creer pour la recuperer sur la page PageProduitController
 		try {
-			DateTimeFormatter formatage = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			//On creer dans la DAO l'objet Produit
-			
-			HashMap<Produit, LigneCommande> ligneCommande = new HashMap<Produit, LigneCommande>(); 
-			Commande commande = new Commande(1, LocalDate.parse(date, formatage), idClient, ligneCommande);
-			commandeDAO.create(commande);
-			LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif());
-			ligneCommande.put(produitDAO.getById(idProduit), lc); 
-			ligneCommandeDAO.create(lc); 
-			
-			this.commandeAjout = commande;
-			
-			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
-			Stage stage = (Stage) btnCreer.getScene().getWindow();
-			stage.close();
+			//if (quantite>0) {
+				DateTimeFormatter formatage = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				//On creer dans la DAO l'objet Produit
+				
+				HashMap<Produit, LigneCommande> ligneCommande = new HashMap<Produit, LigneCommande>(); 
+				Commande commande = new Commande(1, LocalDate.parse(date, formatage), idClient, ligneCommande);
+				commandeDAO.create(commande);
+				LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif());
+				ligneCommande.put(produitDAO.getById(idProduit), lc); 
+				ligneCommandeDAO.create(lc); 
+				
+				this.commandeAjout = commande;
+				
+				//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
+				Stage stage = (Stage) btnCreer.getScene().getWindow();
+				stage.close();
+				/*}
+		
+			else {
+				this.lblAffichage.setTextFill(Color.RED);
+				this.lblAffichage.setText("Merci de saisir une quantité valide");
+			}*/
 			
 		}
 		catch (Exception e) {
 			this.lblAffichage.setTextFill(Color.RED);
 			this.lblAffichage.setText(e.getMessage());
-			e.printStackTrace();
 		}
 	}
 
