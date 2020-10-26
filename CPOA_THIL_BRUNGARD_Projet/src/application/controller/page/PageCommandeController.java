@@ -2,6 +2,7 @@ package application.controller.page;
 
 import java.net.URL;
 
+
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
@@ -27,13 +28,16 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import modele.Client;
 import modele.Commande;
 import modele.LigneCommande;
 
@@ -47,7 +51,6 @@ public class PageCommandeController implements Initializable {
 	@FXML private Button addCommande;
 	@FXML private Button deleteCommande;
 	@FXML private Button editCommande;
-	@FXML private Button searchCommande;
 	@FXML private Button detailCommande;
 	
 	@SuppressWarnings("unused")
@@ -56,6 +59,22 @@ public class PageCommandeController implements Initializable {
 	
 	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
 	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
+	
+	private Client client=null; 
+	
+	public void initData(Client selectedClient) {
+		client = selectedClient; 
+		 if (client!=null) {
+			 try {
+				for (Commande commande : commandeDAO.findAll()) {
+					 if (commande.getIdClient() != client.getId()) this.tabCommande.getItems().remove(commande); 
+				 }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		 }
+		
+	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -73,19 +92,45 @@ public class PageCommandeController implements Initializable {
 			}
 		});
 		
-		try {
-			this.tabCommande.getItems().addAll(commandeDAO.findAll());
+	
+			
+		 try {
+			 this.tabCommande.getItems().addAll(commandeDAO.findAll()); 
+			 
+			 if (client!=null) {
+				 for (Commande commande : commandeDAO.findAll()) {
+					 if (commande.getIdClient() != client.getId()) this.tabCommande.getItems().remove(commande); 
+				 }
+			 }
+			
 		} catch (Exception e) {
-			// TODO Bloc catch généré automatiquement
 			e.printStackTrace();
 		}
+	
 		
 		this.tabCommande.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
 					this.commande = tabCommande.getSelectionModel().getSelectedItem();
+					this.addCommande.setDisable(newValue != null);
 					this.deleteCommande.setDisable(newValue == null);
 					this.editCommande.setDisable(newValue == null);
 					this.detailCommande.setDisable(newValue == null);
+					
+				}); 
+					
+					//event qui annule la selection actuelle de la tableView si on selectionne une ligne vide
+					this.tabCommande.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+					    Node source = evt.getPickResult().getIntersectedNode();
+					   
+					    // move up through the node hierarchy until a TableRow or scene root is found 
+					    while (source != null && !(source instanceof TableRow)) {
+					        source = source.getParent();
+					    }
+
+					    // clear selection on click anywhere but on a filled row
+					    if (source == null || (source instanceof TableRow && ((TableRow<?>) source).isEmpty())) {
+					    	tabCommande.getSelectionModel().clearSelection();
+					    }
 				});
 		
 		this.deleteCommande.setDisable(true);
@@ -120,7 +165,6 @@ public class PageCommandeController implements Initializable {
 			
 			if (controller.getCommandeAjout() != null)
 				tabCommande.getItems().add(controller.getCommandeAjout());
-			System.out.println(controller.getCommandeAjout());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -202,7 +246,6 @@ public class PageCommandeController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
-				System.out.println(commande);
 				for (Map.Entry mapentry : commande.getLigneCommande().entrySet()) {
 					DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO().delete((LigneCommande) mapentry.getValue());
 		        }

@@ -315,5 +315,16 @@ public class PageClientController implements Initializable {
 		tabClient.getItems().removeAll(listeClientSurplus);
 		tabClient.getItems().addAll(listeClientMino);
 	}
+
+	public TableView<Client> getTabClient() {
+		return tabClient;
+	}
+
+	public void setTabClient(TableView<Client> tabClient) {
+		this.tabClient = tabClient;
+	}
+	
+	
+	
 	
 }

@@ -53,11 +53,12 @@ public class ListeMemoireLigneCommandeDAO implements LigneCommandeDAO<LigneComma
 			System.out.println(e.getMessage());
 		}
 		
-		if (idx)
+		if (idx) {
 			if (this.donnees.contains(objet))
 				throw new IllegalArgumentException("Cette commande existe deja, veuillez faire une modification si ce n'est pas une erreur");
 			else 
 				this.donnees.add(objet);
+		}
 			
 		return idx;
 	}

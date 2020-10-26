@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import modele.Client;
 import modele.Commande;
@@ -100,11 +101,12 @@ public class AjoutCommandeController implements Initializable {
 		try {
 			DateTimeFormatter formatage = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			//On creer dans la DAO l'objet Produit
-			LigneCommande lc = new LigneCommande(1, idProduit, quantite, produitDAO.getById(idProduit).getTarif());
+			
 			HashMap<Produit, LigneCommande> ligneCommande = new HashMap<Produit, LigneCommande>(); 
-			ligneCommande.put(produitDAO.getById(idProduit), lc); 
 			Commande commande = new Commande(1, LocalDate.parse(date, formatage), idClient, ligneCommande);
 			commandeDAO.create(commande);
+			LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif());
+			ligneCommande.put(produitDAO.getById(idProduit), lc); 
 			ligneCommandeDAO.create(lc); 
 			
 			this.commandeAjout = commande;
@@ -115,8 +117,8 @@ public class AjoutCommandeController implements Initializable {
 			
 		}
 		catch (Exception e) {
-			//this.lblAffichage.setTextFill(Color.RED);
-			//this.lblAffichage.setText(e.getMessage());
+			this.lblAffichage.setTextFill(Color.RED);
+			this.lblAffichage.setText(e.getMessage());
 			e.printStackTrace();
 		}
 	}

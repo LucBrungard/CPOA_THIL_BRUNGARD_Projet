@@ -64,7 +64,7 @@ public class EditLigneCommandeController implements Initializable {
 			for (Map.Entry m : lc.entrySet()) {
 				if(m.getValue()==selectedItem) lc.replace((Produit) m.getKey(), ligneCommande); 
 	        }
-			
+ 			
 			ligneCommandeDAO.update(ligneCommande); 
 			
 			Commande commande = new Commande(selectedCommande.getId(), selectedCommande.getDate(), selectedCommande.getIdClient(), lc); 
@@ -74,7 +74,12 @@ public class EditLigneCommandeController implements Initializable {
 			
 			}
 			
-			//On rï¿½cupï¿½re la scene sur laquelle le btnModif est place et on ferme cette fenetre
+			else {
+				lblAffichage.setText("merci de saisir une quantité valide");
+				lblAffichage.setTextFill(Color.RED);
+			}
+			
+			//On recupere la scene sur laquelle le btnModif est place et on ferme cette fenetre
 			Stage stage = (Stage) btnModif.getScene().getWindow();
 			stage.close();
 		}

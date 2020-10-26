@@ -21,35 +21,38 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import modele.Client;
 import modele.Commande;
 import modele.LigneCommande;
 import modele.Produit;
 
-public class DetailCommandeController {
+public class DetailCommandeController implements Initializable {
 	
 	@FXML private TableView<LigneCommande> tabLigneCommande;
 	@FXML private TableColumn<LigneCommande, String> idProduit = new TableColumn<LigneCommande, String>("Identifiant Produit");
 	@FXML private TableColumn<LigneCommande, Integer> quantite = new TableColumn<LigneCommande, Integer>("Quantité");
 	@FXML private TableColumn<LigneCommande, String> prixUnitaire = new TableColumn<LigneCommande, String>("Prix Unitaire");
 	
-	@FXML private Button addCommande;
-	@FXML private Button deleteCommande;
-	@FXML private Button editCommande;
-	@FXML private Button detailCommande;
+	@FXML private Button addLigneCommande;
+	@FXML private Button deleteLigneCommande;
+	@FXML private Button editLigneCommande;
 	
 	@SuppressWarnings("unused")
 	private MainController main;
@@ -60,18 +63,35 @@ public class DetailCommandeController {
 	LigneCommandeDAO<LigneCommande> ligneCommandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO();
 	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
 	
+	public void initData() {
+	}
+	
+	
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		this.tabLigneCommande.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
-					this.deleteCommande.setDisable(newValue == null);
-					this.editCommande.setDisable(newValue == null);
-					this.detailCommande.setDisable(newValue == null);
+					this.addLigneCommande.setDisable(newValue != null); 
+					this.deleteLigneCommande.setDisable(newValue == null);
+					this.editLigneCommande.setDisable(newValue == null);
 				});
 		
-		this.deleteCommande.setDisable(true);
-		this.editCommande.setDisable(true);
-		this.detailCommande.setDisable(true);
+		//event qui annule la selection actuelle de la tableView si on selectionne une ligne vide
+				this.tabLigneCommande.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+				    Node source = evt.getPickResult().getIntersectedNode();
+				   
+				    // move up through the node hierarchy until a TableRow or scene root is found 
+				    while (source != null && !(source instanceof TableRow)) {
+				        source = source.getParent();
+				    }
+
+				    // clear selection on click anywhere but on a filled row
+				    if (source == null || (source instanceof TableRow && ((TableRow<?>) source).isEmpty())) {
+				    	tabLigneCommande.getSelectionModel().clearSelection();
+				    }}); 
+		
+		this.deleteLigneCommande.setDisable(true);
+		this.editLigneCommande.setDisable(true);
 	}
 	
 	public void init(MainController mainController) {
@@ -133,7 +153,6 @@ public class DetailCommandeController {
 			
 			if (controller.getLigneCommandeAjout() != null)
 				tabLigneCommande.getItems().add(controller.getLigneCommandeAjout());
-			System.out.println(controller.getLigneCommandeAjout());
 			
 			//On charge l'url de la page PageProduit.fxml pour actualiser les quantite
 			URL fxmlURL2=getClass().getResource("/fxml/page/PageProduit.fxml");
@@ -170,7 +189,6 @@ public class DetailCommandeController {
 				}
 				Commande c = new Commande(commande.getId(), commande.getDate(), commande.getIdClient(), newLigneCommande);
 				commandeDAO.update(c); 
-				System.out.println(selectedItem);
 				ligneCommandeDAO.delete(selectedItem);
 				tabLigneCommande.getItems().remove(selectedItem);
 				tabLigneCommande.getSelectionModel().clearSelection();

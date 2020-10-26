@@ -4,12 +4,22 @@ import java.net.URL;
 
 import java.util.ResourceBundle;
 
+import application.controller.add.AjoutCategorieController;
+import application.controller.edit.EditCategorieController;
+import application.controller.page.PageCommandeController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.ClientDAO;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import modele.Client;
 
 public class DetailClientController implements Initializable {
@@ -21,6 +31,7 @@ public class DetailClientController implements Initializable {
 	@FXML private Label lblCodePostal; 
 	@FXML private Label lblVille;
 	@FXML private Label lblPays;
+	@FXML private Button voirCommande; 
 	
 	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
 	private Client selectedItem;
@@ -43,6 +54,36 @@ public class DetailClientController implements Initializable {
 	}
 
 	public void detailClient() {
+	}
+	
+	public void voirCommande() {
+		Stage nStage = new Stage();
+		try {
+			//On charge l'url de la page ModifCateg.fxml
+			URL fxmlURL=getClass().getResource("/fxml/page/PageCommande.fxml");
+			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
+			Node root = fxmlLoader.load();
+			
+			//On affiche la fenetre ModifCateg
+			Scene scene = new Scene((AnchorPane) root, 650, 350);
+			nStage.setScene(scene);
+			nStage.setResizable(false);
+			nStage.setTitle("Modififer un client");
+			nStage.initModality(Modality.APPLICATION_MODAL);
+			
+			//On recupere le controleur de la page ModifCateg.fxml
+			PageCommandeController controller = fxmlLoader.getController();
+			
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			controller.initData(selectedItem); 
+			
+			//Et on affiche la page et on attend qu'elle soit fermee
+			nStage.showAndWait();
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Client getSelectedItem() {
