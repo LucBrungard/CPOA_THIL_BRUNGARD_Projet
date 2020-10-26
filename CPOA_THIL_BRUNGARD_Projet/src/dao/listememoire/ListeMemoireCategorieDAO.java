@@ -42,7 +42,6 @@ public class ListeMemoireCategorieDAO implements CategorieDAO {
 
 	@Override
 	public boolean create(Categorie categorie) {
-		System.out.println(categorie.toString());
 		categorie.setId(3);
 		
 		// Ne fonctionne que si l'objet metier est bien fait...
@@ -50,13 +49,12 @@ public class ListeMemoireCategorieDAO implements CategorieDAO {
 			categorie.setId(categorie.getId() + 1);
 		}
 		
-		boolean ok = duplicata(categorie);
-		if (!ok)
-			ok = donnees.add(categorie);
+		if (!duplicata(categorie))
+			donnees.add(categorie);
 		else 
 			throw new IllegalArgumentException("Ce titre de categorie existe deja !");
 		
-		return ok;
+		return true;
 	}
 
 	@Override
@@ -67,7 +65,11 @@ public class ListeMemoireCategorieDAO implements CategorieDAO {
 		if (idx == -1) {
 			throw new IllegalArgumentException("Tentative de modification d'une categorie inexistante");
 		} else {
-			if (!duplicata(objet))
+			//si le nom n'a pas ete change
+			if (donnees.get(idx).getTitre().equals(objet.getTitre())) 
+				donnees.set(idx, objet);
+			//sinon si le nom a pas ete change, on regarde si le nom existe deja
+			else if (!duplicata(objet))
 				donnees.set(idx, objet);
 			else
 				throw new IllegalArgumentException("Ce titre de categorie existe deja !");
@@ -79,7 +81,7 @@ public class ListeMemoireCategorieDAO implements CategorieDAO {
 	@Override
 	public boolean delete(Categorie objet) {
 
-		// Ne fonctionne que si l'objet m�tier est bien fait...
+		// Ne fonctionne que si l'objet metier est bien fait...
 		boolean idx = donnees.remove(objet);
 		if (!idx) 
 			throw new IllegalArgumentException("Tentative de suppression d'une categorie inexistante");
