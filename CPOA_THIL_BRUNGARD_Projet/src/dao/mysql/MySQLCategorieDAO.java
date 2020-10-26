@@ -32,14 +32,22 @@ public class MySQLCategorieDAO implements CategorieDAO {
 		
 		int nbLignes = 0;
 		
-		PreparedStatement requete = laConnexion.prepareStatement("insert into `Categorie` (`titre`, `visuel`) values (?, ?);");
-		requete.setString(1,categorie.getTitre());
-		requete.setString(2,categorie.getVisuel());
+		//Pour ne pas creer de duplicata
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE titre=" + categorie.getTitre());
+		ResultSet ligneVerif = verif.executeQuery();
 		
-		nbLignes = requete.executeUpdate();
-		
-		if (nbLignes == 0)
-			throw new IllegalArgumentException("\nEchec de la creation<<");
+		if (ligneVerif.next()) 
+			throw new IllegalArgumentException("Cette categorie existe deja !");
+		else {
+			PreparedStatement requete = laConnexion.prepareStatement("insert into `Categorie` (`titre`, `visuel`) values (?, ?);");
+			requete.setString(1,categorie.getTitre());
+			requete.setString(2,categorie.getVisuel());
+			
+			nbLignes = requete.executeUpdate();
+			
+			if (nbLignes == 0)
+				throw new IllegalArgumentException("\nEchec de la creation");
+		}
 		
 		if (laConnexion != null)
 			laConnexion.close();
@@ -53,15 +61,30 @@ public class MySQLCategorieDAO implements CategorieDAO {
 		
 		int nbLignes = 0;
 		
-		PreparedStatement requete = laConnexion.prepareStatement("update `Categorie` set titre=?, visuel=? where id_categorie=?");
-		requete.setString(1,categorie.getTitre());
-		requete.setString(2,categorie.getVisuel());
-		requete.setInt(3,categorie.getId());
-		
-		nbLignes = requete.executeUpdate();
-		
-		if (nbLignes == 0)
-			throw new IllegalArgumentException("\nTentative de modification d'une categorie inexistante");
+		//Pour ne pas creer de duplicata
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE id_categorie=" + categorie.getId());
+		ResultSet ligneVerif = verif.executeQuery();
+
+		if (ligneVerif.next()) {
+			//Si le titre de la categorie a change on regarde s'il existe deja
+			if ( !categorie.getTitre().equals(ligneVerif.getString(1)) ) {
+				PreparedStatement existe = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE titre=" + categorie.getTitre());
+				ResultSet existeLigne = existe.executeQuery();
+				
+				if (existeLigne.next()) 
+					throw new IllegalArgumentException("Cette categorie existe deja !");
+			}
+			
+			PreparedStatement requete = laConnexion.prepareStatement("update `Categorie` set titre=?, visuel=? where id_categorie=?");
+			requete.setString(1,categorie.getTitre());
+			requete.setString(2,categorie.getVisuel());
+			requete.setInt(3,categorie.getId());
+			
+			nbLignes = requete.executeUpdate();
+			
+			if (nbLignes == 0)
+				throw new IllegalArgumentException("\nTentative de modification d'une categorie inexistante");
+		}
 		
 		if (laConnexion != null)
 			laConnexion.close();

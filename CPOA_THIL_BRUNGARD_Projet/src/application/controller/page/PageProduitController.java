@@ -48,7 +48,7 @@ public class PageProduitController implements Initializable {
 	@FXML private TableColumn<Produit, Float> tarifProduit = new TableColumn<Produit, Float>("Tarif");
 	@FXML private TableColumn<Produit, String> visuelProduit = new TableColumn<Produit, String>("Visuel");
 	@FXML private TableColumn<Produit, String> categProduit = new TableColumn<Produit, String>("Categorie");
-	@FXML private TableColumn<Produit, Integer> qteCommandee = new TableColumn<Produit, Integer>("Quantitee commandee");
+	@FXML private TableColumn<Produit, Integer> qteCommandee = new TableColumn<Produit, Integer>("Quantite commandee");
 	
 	@FXML private Button addProduit;
 	@FXML private Button deleteProduit;
