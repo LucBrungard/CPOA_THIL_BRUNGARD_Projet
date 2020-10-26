@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -23,6 +24,8 @@ public class EditClientController implements Initializable {
 	@FXML private Label lblAffichage;
 	@FXML private TextField editNom;
 	@FXML private TextField editPrenom; 
+	@FXML private TextField editIdentifiant;
+	@FXML private PasswordField editMdp; 
 	@FXML private TextField editNo;
 	@FXML private TextField editRue;
 	@FXML private TextField editCodePostal;
@@ -41,6 +44,8 @@ public class EditClientController implements Initializable {
 		
 		editNom.setText(client.getNom());
 		editPrenom.setText(client.getPrenom());
+		editIdentifiant.setText(client.getPrenom());
+    	editMdp.setText(client.getMotDePasse());
 		editNo.setText(client.getNumero());
 		editRue.setText(client.getRue());
 		editCodePostal.setText(client.getCodePostal());
@@ -54,6 +59,8 @@ public class EditClientController implements Initializable {
 	public void modifClient() {
 		String nom = editNom.getText().trim();
 		String prenom = editPrenom.getText().trim();
+		String identifiant = editIdentifiant.getText().trim();
+    	String mdp = editMdp.getText().trim();
 		String numero = editNo.getText().trim();
 		String rue = editRue.getText().trim();
 		String codePostal = editCodePostal.getText().trim();
@@ -62,7 +69,7 @@ public class EditClientController implements Initializable {
 		
 		try {
 			//On creer dans la DAO l'objet Produit
-			Client client = new Client(selectedItem.getId(), nom, prenom, numero, rue, codePostal, ville, pays);
+			Client client = new Client(selectedItem.getId(), nom, prenom, identifiant, mdp, numero, rue, codePostal, ville, pays);
 			clientDAO.update(client);
 			
 			this.selectedItem = client;

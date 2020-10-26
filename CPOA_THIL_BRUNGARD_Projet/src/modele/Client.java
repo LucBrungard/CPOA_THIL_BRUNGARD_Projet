@@ -5,17 +5,21 @@ public class Client {
 	private int id;
 	private String nom ;
 	private String prenom;
+	private String identifiant; 
+	private String motDePasse; 
 	private String numero;
 	private String rue;  
 	private String codePostal;
 	private String ville; 
 	private String pays; 
 	
-	public Client(int id, String nom, String prenom, String numero, String rue, String codePostal, String ville, String pays ) {
+	public Client(int id, String nom, String prenom, String identifiant, String motDePasse,  String numero, String rue, String codePostal, String ville, String pays ) {
 		super();
 		this.setId(id);
 		this.setNom(nom);
 		this.setPrenom(prenom);
+		this.setIdentifiant(identifiant); 
+		this.setMotDePasse(motDePasse); 
 		this.setNumero(numero);
 		this.setRue(rue);
 		this.setCodePostal(codePostal);
@@ -54,6 +58,32 @@ public class Client {
 	}
 
 	
+	public String getIdentifiant() {
+		return identifiant;
+	}
+
+
+	public void setIdentifiant(String identifiant) {
+		if (identifiant == null || identifiant.trim().length() == 0) {
+			throw new IllegalArgumentException("Identifiant vide !");
+		}
+		this.identifiant= identifiant;
+	}
+
+
+	public String getMotDePasse() {
+		return motDePasse;
+	}
+
+
+	public void setMotDePasse(String motDePasse) {
+		if (motDePasse == null || motDePasse.trim().length() == 0) {
+			throw new IllegalArgumentException("Mot de passe vide !");
+		}
+		this.motDePasse = motDePasse;
+	}
+
+
 	public String getNumero() {
 		return this.numero;
 	}
@@ -134,12 +164,16 @@ public class Client {
 	}
 
 
+	
+	
 	@Override
 	public String toString() {
-		return "Client [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", numero=" + numero + ", rue=" + rue
-				+ ", codePostal=" + codePostal + ", ville=" + ville + ", pays=" + pays + "]";
+		return "Client [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", identifiant=" + identifiant
+				+ ", motDePasse=" + motDePasse + ", numero=" + numero + ", rue=" + rue + ", codePostal=" + codePostal
+				+ ", ville=" + ville + ", pays=" + pays + "]";
 	}
-	
+
+
 	public String toStringUtilisateur() {
 		return nom + " " + prenom + "," + numero + " " + "rue" + rue + " " + codePostal+ " " + ville + "," + pays; 
 	}

@@ -2,10 +2,8 @@ package application.controller.detail;
 
 import java.net.URL;
 
-import java.util.ResourceBundle;
 
-import application.controller.add.AjoutCategorieController;
-import application.controller.edit.EditCategorieController;
+import java.util.ResourceBundle;
 import application.controller.page.PageCommandeController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
@@ -17,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,6 +25,9 @@ public class DetailClientController implements Initializable {
 	
 	@FXML private Label lblNom; 
 	@FXML private Label lblPrenom; 
+	@FXML private Label lblIdentifiant; 
+	@FXML private PasswordField editMdp; 
+	
 	@FXML private Label lblNo; 
 	@FXML private Label lblRue; 
 	@FXML private Label lblCodePostal; 
@@ -45,6 +47,8 @@ public class DetailClientController implements Initializable {
 		
 		lblNom.setText(client.getNom());
 		lblPrenom.setText(client.getPrenom());
+		lblIdentifiant.setText(client.getIdentifiant()); 
+		editMdp.setText(client.getMotDePasse()); 
 		lblNo.setText(client.getNumero());
 		lblRue.setText(client.getRue());
 		lblCodePostal.setText(client.getCodePostal());

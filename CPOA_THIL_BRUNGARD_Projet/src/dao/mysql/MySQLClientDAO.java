@@ -30,9 +30,11 @@ public class MySQLClientDAO implements ClientDAO{
 		int nbLignes = 0;
 		
 		PreparedStatement requete = laConnexion.prepareStatement("insert into `Client` (`nom`, `prenom`, `identifiant`, `mot_de_passe`, `adr_numero`, `adr_voie`, `adr_code_postal`, `adr_ville`, `adr_pays`) "
-				+ "VALUES (?, ?,'identifiant', 'mdp' ,? ,? ,? ,?, ?)");	
+				+ "VALUES (?, ?,'?', '?' ,? ,? ,? ,?, ?)");	
 		requete.setString(1, client.getNom());	
 		requete.setString(2, client.getPrenom());	
+		requete.setString(3, client.getIdentifiant());
+		requete.setString(4, client.getMotDePasse());
 		requete.setString(5, client.getNumero());	
 		requete.setString(6, client.getRue());	
 		requete.setString(7, client.getCodePostal());	
@@ -107,7 +109,7 @@ public class MySQLClientDAO implements ClientDAO{
 		
 		//S'il y a une valeur dans le resultat
 		if (res.next()) {
-			client = new Client(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6), res.getString(7), res.getString(8));
+			client = new Client(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6), res.getString(7), res.getString(8), res.getString(9), res.getString(10));
 		}
 		else {
 			throw new IllegalArgumentException("\nAucun client ne correspond a cet identifiant");
@@ -129,7 +131,7 @@ public class MySQLClientDAO implements ClientDAO{
 		ResultSet res = requete.executeQuery();
 		
 		while (res.next()) {
-			listeClient.add(new Client(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6), res.getString(7), res.getString(8)));
+			listeClient.add(new Client(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), res.getString(6), res.getString(7), res.getString(8), res.getString(9), res.getString(10)));
 		}
 		
 		if (laConnexion != null)
