@@ -111,7 +111,7 @@
                         <TableColumn fx:id="tarifProduit" maxWidth="-1.0" minWidth="100.0" prefWidth="100.0" resizable="false" style="-fx-alignment: CENTER;" text="Tarif" />
                         <TableColumn fx:id="visuelProduit" maxWidth="-1.0" minWidth="150.0" prefWidth="150.0" resizable="false" sortable="false" style="-fx-alignment: CENTER;" text="Visuel" />
                         <TableColumn fx:id="categProduit" maxWidth="-1.0" minWidth="175.0" prefWidth="175.0" resizable="false" style="-fx-alignment: CENTER;" text="Categorie" />
-                        <TableColumn fx:id="qteCommandee" maxWidth="-1.0" minWidth="175.0" prefWidth="175.0" resizable="false" style="-fx-alignment: CENTER;" text="Quantitee commandee" />
+                        <TableColumn fx:id="qteCommandee" maxWidth="-1.0" minWidth="175.0" prefWidth="175.0" resizable="false" style="-fx-alignment: CENTER;" text="Quantite commande" />
                      </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

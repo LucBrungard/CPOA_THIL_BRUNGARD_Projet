@@ -28,19 +28,26 @@ public class MySQLProduitDAO implements ProduitDAO{
 		Connection laConnexion = Connexion.creeConnexion();
 		
 		int nbLignes = 0;
+		PreparedStatement existe = laConnexion.prepareStatement("SELECT nom FROM Produit WHERE nom =" + produit.getNom() );
+		ResultSet existeLigne = existe.executeQuery();
 		
-		PreparedStatement requete = laConnexion.prepareStatement("insert into `Produit` (`nom`, `description`, `tarif`, `visuel`, `id_categorie`) values (?, ?, ?, ?, ?);");
-					
-		requete.setString(1,produit.getNom());
-		requete.setString(2,produit.getDescription());
-		requete.setFloat(3, produit.getTarif());
-		requete.setString(4, produit.getVisuel()); 
-		requete.setInt(5, produit.getIdCateg());
-		
-		nbLignes = requete.executeUpdate();
-		
-		if (nbLignes == 0)
-			throw new IllegalArgumentException("Erreur lors de la creation du produit");
+		if (existeLigne.next()) {
+			throw new IllegalArgumentException("Ce nom de produit existe deja");
+		} 
+		else {
+			PreparedStatement requete = laConnexion.prepareStatement("insert into `Produit` (`nom`, `description`, `tarif`, `visuel`, `id_categorie`) values (?, ?, ?, ?, ?);");
+			
+			requete.setString(1,produit.getNom());
+			requete.setString(2,produit.getDescription());
+			requete.setFloat(3, produit.getTarif());
+			requete.setString(4, produit.getVisuel()); 
+			requete.setInt(5, produit.getIdCateg());
+			
+			nbLignes = requete.executeUpdate();
+			
+			if (nbLignes == 0)
+				throw new IllegalArgumentException("Erreur lors de la creation du produit");
+		}
 		
 		if (laConnexion != null)
 			laConnexion.close();
@@ -53,6 +60,21 @@ public class MySQLProduitDAO implements ProduitDAO{
 		Connection laConnexion = Connexion.creeConnexion();
 		
 		int nbLignes = 0;
+		
+		//Pour ne pas creer de duplicata
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT nom FROM Produit WHERE id_produit=" + produit.getId());
+		ResultSet ligneVerif = verif.executeQuery();
+		
+		if (ligneVerif.next()) {
+			//si le nom du produit a change on  verifie qu'il n'existe pas deja
+			if ( !produit.getNom().equals(ligneVerif.getString(1)) ) {
+				PreparedStatement existe = laConnexion.prepareStatement("SELECT nom FROM Produit WHERE nom =" + produit.getNom() );
+				ResultSet existeLigne = existe.executeQuery();
+				
+				if (existeLigne.next()) 
+					throw new IllegalArgumentException("Ce nom de produit existe deja");
+			}
+		}
 		
 		PreparedStatement requete = laConnexion.prepareStatement("update `Produit` set nom=?, description=?, tarif=?, visuel=? where id_produit=?");
 		requete.setString(1,produit.getNom());
