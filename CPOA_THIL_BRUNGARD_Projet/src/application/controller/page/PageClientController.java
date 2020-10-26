@@ -1,6 +1,7 @@
 package application.controller.page;
 
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -12,6 +13,7 @@ import application.controller.edit.EditClientController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
 import dao.modele.ClientDAO;
+import dao.modele.CommandeDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,6 +35,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import modele.Client;
+import modele.Commande;
 
 
 public class PageClientController implements Initializable {
@@ -57,6 +60,8 @@ public class PageClientController implements Initializable {
 	private Client client; 
 	
 	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
+	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
+	
 	
 	
 	//Initialisation des donnees + ajout des listeners
@@ -208,6 +213,7 @@ public class PageClientController implements Initializable {
 	
 	//Supprime la valeur dans le tableau et dans la dao
 	public void supprClient() {
+		boolean utilise=false; 
 		//Ouvre une fenetre d'alerte pour confirer la suppresion
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
@@ -215,17 +221,29 @@ public class PageClientController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
-				clientDAO.delete(client); 
-				tabClient.getItems().remove(client);
+				for (Commande c : commandeDAO.findAll()) {
+					if (c.getIdClient() == tabClient.getSelectionModel().getSelectedItem().getId())
+						utilise = true;
+				}
+				
+				if (utilise) {
+					Alert nonSuppr = new Alert(AlertType.WARNING);
+					nonSuppr.setTitle("Impossibilite de suppression");
+					nonSuppr.setContentText("Vous ne pouvez pas supprimer ce client car il est utilise dans au moins une commande");
+					nonSuppr.showAndWait();
+				} 
+				else {
+					clientDAO.delete(client); 
+					tabClient.getItems().remove(client);
+				}
+				
 				tabClient.getSelectionModel().clearSelection();
 			} 
 			catch(Exception e) {
 				e.printStackTrace();
 			}
 		}	
-		else {
-			tabClient.getSelectionModel().clearSelection();
-		}
+		tabClient.getSelectionModel().clearSelection();
 	}
 	
 	
