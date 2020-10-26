@@ -1,8 +1,7 @@
 package application.controller.edit;
 
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import java.util.ResourceBundle;
 
 import dao.Persistance;
@@ -15,8 +14,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import modele.Client;
@@ -26,13 +26,12 @@ public class EditCommandeController implements Initializable{
 	
 	@FXML private Button btnModif;
 	@FXML private Label lblAffichage;
-	@FXML private TextField editDate;
+	@FXML private DatePicker editDate;
 	@FXML private ChoiceBox<Client> cbxClient;
 	ObservableList<Client> listeClient = FXCollections.observableArrayList();
 	
 	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
 	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
-	DateTimeFormatter formatage = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
 	private Commande selectedItem;
 	
@@ -44,7 +43,8 @@ public class EditCommandeController implements Initializable{
 		
 		selectedItem = commande; 
 		
-		editDate.setText(commande.getDate().format(formatage));
+		editDate.setValue(commande.getDate());
+		editDate.setEditable(false);
  
     	try {
 			for (Client client : clientDAO.findAll()) {
@@ -68,7 +68,6 @@ public class EditCommandeController implements Initializable{
 
 	@FXML
 	public void modifCommande() {
-		String date = editDate.getText().trim();
 		
 		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
 		Client selectClient = cbxClient.getSelectionModel().getSelectedItem(); 
@@ -81,7 +80,7 @@ public class EditCommandeController implements Initializable{
 		
 		try {
 			//On creer dans la DAO l'objet Produit
-			Commande commande = new Commande(selectedItem.getId(), LocalDate.parse(date, formatage), idClient, selectedItem.getLigneCommande()); 
+			Commande commande = new Commande(selectedItem.getId(), editDate.getValue(), idClient, selectedItem.getLigneCommande()); 
 			commandeDAO.update(commande); 
 			
 			this.selectedItem = commande;

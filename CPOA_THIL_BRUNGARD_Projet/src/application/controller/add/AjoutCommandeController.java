@@ -1,8 +1,7 @@
 package application.controller.add;
 
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -18,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
@@ -31,7 +31,7 @@ public class AjoutCommandeController implements Initializable {
 	
 	@FXML private Button btnCreer;
 	@FXML private Label lblAffichage;
-	@FXML private TextField editDate;
+	@FXML private DatePicker editDate;
 	@FXML private TextField editQuantite; 
 	@FXML private ChoiceBox<Client> cbxClient;
 	@FXML private ChoiceBox<Produit> cbxProduit;
@@ -49,8 +49,9 @@ public class AjoutCommandeController implements Initializable {
 		ObservableList<Client> listeClient = FXCollections.observableArrayList();
 		ObservableList<Produit> listeProduit = FXCollections.observableArrayList();
 	
+		editDate.setEditable(false);
+		
 	    try {
-	    	this.editDate.setText("");
 	    	this.editQuantite.setText("");
 	 
 	    	for (Client client : clientDAO.findAll()) {
@@ -70,7 +71,7 @@ public class AjoutCommandeController implements Initializable {
 	   
 	@FXML
 	public void ajoutCommande() {
-		String date = editDate.getText().trim();
+		
 		int quantite = 0;
 		
 		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
@@ -99,12 +100,12 @@ public class AjoutCommandeController implements Initializable {
 		//On creer le produit. Si erreur, elle sera affichee dans le label a cet effet
 		//On enregistre l'instance de produit que l'on vient de creer pour la recuperer sur la page PageProduitController
 		try {
-			//if (quantite>0) {
-				DateTimeFormatter formatage = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			if (editDate.getValue()!=null) {
+				
 				//On creer dans la DAO l'objet Produit
 				
 				HashMap<Produit, LigneCommande> ligneCommande = new HashMap<Produit, LigneCommande>(); 
-				Commande commande = new Commande(1, LocalDate.parse(date, formatage), idClient, ligneCommande);
+				Commande commande = new Commande(1, editDate.getValue(), idClient, ligneCommande);
 				commandeDAO.create(commande);
 				LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif());
 				ligneCommande.put(produitDAO.getById(idProduit), lc); 
@@ -115,12 +116,12 @@ public class AjoutCommandeController implements Initializable {
 				//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 				Stage stage = (Stage) btnCreer.getScene().getWindow();
 				stage.close();
-				/*}
+				}
 		
 			else {
 				this.lblAffichage.setTextFill(Color.RED);
-				this.lblAffichage.setText("Merci de saisir une quantité valide");
-			}*/
+				this.lblAffichage.setText("Merci de saisir la date");
+			}
 			
 		}
 		catch (Exception e) {
