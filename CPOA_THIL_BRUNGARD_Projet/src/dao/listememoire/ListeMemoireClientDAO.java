@@ -1,10 +1,12 @@
 package dao.listememoire;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import dao.modele.ClientDAO;
 import modele.Client;
+
 
 public class ListeMemoireClientDAO implements ClientDAO {
 	
@@ -28,34 +30,64 @@ public class ListeMemoireClientDAO implements ClientDAO {
 
 		this.donnees.add(new Client(1, "LAROCHE", "Pierre", "pl@ul.fr", "toto", "12", "rue des etudiants", "57990", "Metz", "France"));
 	}
+	
+	//Fonction de verification si le titre de categ existe deja
+	private boolean duplicata(Client client) {
+		String nom = client.getNom();
+		String prenom = client.getPrenom();
+		String identifiant = client.getIdentifiant();
+		
+		for (int i = 0; i < donnees.size(); i++) {
+			if ((donnees.get(i).getNom().equals(nom)) && (donnees.get(i).getPrenom().equals(prenom)) && (donnees.get(i).getIdentifiant().equals(identifiant)))
+				return true;
+		}
+		return false;
+	}
 
 
 	@Override
-	public boolean create(Client objet) throws IllegalArgumentException {
+	public boolean create(Client client) throws IllegalArgumentException {
 
-		objet.setId(1);
+		client.setId(2);
 		// Ne fonctionne que si l'objet metier est bien fait...
-		while (this.donnees.contains(objet)) {
-
-			objet.setId(objet.getId() + 1);
+		
+		while (donnees.contains(client)) {
+			client.setId(client.getId() + 1);
 		}
-		boolean ok = this.donnees.add(objet);
 		
-		if (!ok)
-			throw new IllegalArgumentException("Erreur lors de la creation du client");
+		if (!duplicata(client))
+			donnees.add(client);
+		else 
+			throw new IllegalArgumentException("Ce client existe deja !");
 		
-		return ok;
+		return true;
 	}
 
 	@Override
-	public boolean update(Client objet) throws IllegalArgumentException {
+	public boolean update(Client client) throws IllegalArgumentException {
 		
 		// Ne fonctionne que si l'objet metier est bien fait...
-		int idx = this.donnees.indexOf(objet);
+		/*int idx = this.donnees.indexOf(objet);
 		if (idx == -1) {
 			throw new IllegalArgumentException("Tentative de modification d'un client inexistant");
 		} else {
 			this.donnees.set(idx, objet);
+		}
+		
+		return true;*/
+		
+		int idx = donnees.indexOf(client);
+		if (idx == -1) {
+			throw new IllegalArgumentException("Tentative de modification d'un client inexistant");
+		} else {
+			//si le nom n'a pas ete change
+			if ((donnees.get(idx).getNom().equals(client.getNom())) && (donnees.get(idx).getPrenom().equals(client.getPrenom())) && (donnees.get(idx).getIdentifiant().equals(client.getIdentifiant())) )
+				donnees.set(idx, client);
+			//sinon si le nom a pas ete change, on regarde si le nom existe deja
+			else if (!duplicata(client))
+				donnees.set(idx, client);
+			else
+				throw new IllegalArgumentException("Ce client existe deja !");
 		}
 		
 		return true;

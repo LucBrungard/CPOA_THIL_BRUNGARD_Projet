@@ -3,6 +3,7 @@ package application.controller.add;
 import java.net.URL;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import dao.Persistance;
@@ -15,11 +16,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import modele.Client;
@@ -94,7 +98,7 @@ public class AjoutCommandeController implements Initializable {
 			quantite = Integer.parseInt(editQuantite.getText().trim());
 		}
 		catch (NumberFormatException e) {
-			//this.lblAffichage.setText(e.getMessage());
+			this.lblAffichage.setText(e.getMessage());
 		}
 		
 		//On creer le produit. Si erreur, elle sera affichee dans le label a cet effet
@@ -127,6 +131,27 @@ public class AjoutCommandeController implements Initializable {
 		catch (Exception e) {
 			this.lblAffichage.setTextFill(Color.RED);
 			this.lblAffichage.setText(e.getMessage());
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Alerte doublon");
+			alert.setContentText("Ce client a déjà une commande à cette date, si vous cliquez sur OK, le produit sera ajouté à la commande déjà existante");
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.OK){
+				try {
+					for (Commande commande : commandeDAO.findAll()) {
+						if ((commande.getIdClient() == idClient) && (commande.getDate().equals(editDate.getValue()))) {
+							LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif()); 
+							ligneCommandeDAO.create(lc); 
+							commande.getLigneCommande().put(produitDAO.getById(idProduit), lc); 
+							commandeDAO.update(commande); 
+							//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
+							Stage stage = (Stage) btnCreer.getScene().getWindow();
+							stage.close();
+						}
+					}
+				} catch (Exception e1) {
+					lblAffichage.setText(e1.getMessage());;
+				}
+			}
 		}
 	}
 

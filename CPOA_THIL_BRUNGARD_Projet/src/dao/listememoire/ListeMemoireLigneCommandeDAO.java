@@ -1,12 +1,12 @@
 package dao.listememoire;
 import java.util.ArrayList;
 
+
 import java.util.List;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
 import dao.modele.LigneCommandeDAO;
 import modele.LigneCommande;
+
 
 
 public class ListeMemoireLigneCommandeDAO implements LigneCommandeDAO<LigneCommande> {
@@ -34,46 +34,39 @@ public class ListeMemoireLigneCommandeDAO implements LigneCommandeDAO<LigneComma
 		
 	}
 
+	
+	//Fonction de verification si le titre de categ existe deja
+	private boolean duplicata(LigneCommande ligneCommande) {
+		int idCommande = ligneCommande.getIdCommande(); 
+		int idProduit = ligneCommande.getIdProduit(); 
+		
+		for (int i = 0; i < donnees.size(); i++) {
+			if ((donnees.get(i).getIdCommande() == idCommande) && (donnees.get(i).getIdProduit() == idProduit))
+				return true;
+		}
+		return false;
+	}
+	
 
-	public boolean create(LigneCommande objet) {
-
-		boolean idx = true;
+	public boolean create(LigneCommande ligneCommande) {
 		
-		try {
-			DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO().getById(objet.getIdCommande());
-		} catch (Exception e) {
-			idx = false;
-			System.out.println(e.getMessage());
-		}
+		if (!duplicata(ligneCommande)) 
+			this.donnees.add(ligneCommande);
+		else
+			throw new IllegalArgumentException("Cette commande existe deja, veuillez faire une modification si ce n'est pas une erreur");
 		
-		try {
-			DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO().getById(objet.getIdProduit());
-		} catch (Exception e) {
-			idx = false;
-			System.out.println(e.getMessage());
-		}
-		
-		if (idx) {
-			if (this.donnees.contains(objet))
-				throw new IllegalArgumentException("Cette commande existe deja, veuillez faire une modification si ce n'est pas une erreur");
-			else 
-				this.donnees.add(objet);
-		}
-			
-		return idx;
+		return true;
 	}
 
 	@Override
-	public boolean update(LigneCommande objet) {
+	public boolean update(LigneCommande ligneCommande) {
 		
-		// Ne fonctionne que si l'objet metier est bien fait...
-		int idx = this.donnees.indexOf(objet);
-		if (idx == -1) {
-			throw new IllegalArgumentException("Tentative de modification d'une ligne de commande inexistante");
-		} else {
-			
-			this.donnees.set(idx, objet);
-		}
+		// Ne fonctionne que si l'objet metier est bien fait...int idx = donnees.indexOf(ligneCommande);
+		int idx = this.donnees.indexOf(ligneCommande);
+		if (idx == -1) 
+			throw new IllegalArgumentException("Tentative de modification  d'une ligne de commande inexistante");
+		else 
+			donnees.set(idx, ligneCommande);
 		
 		return true;
 	}

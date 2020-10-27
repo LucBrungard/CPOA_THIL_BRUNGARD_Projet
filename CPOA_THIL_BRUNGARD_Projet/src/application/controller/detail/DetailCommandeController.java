@@ -1,6 +1,7 @@
 package application.controller.detail;
 
 import java.net.URL;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -38,7 +39,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import modele.Client;
 import modele.Commande;
 import modele.LigneCommande;
 import modele.Produit;

@@ -1,6 +1,7 @@
 package dao.listememoire;
 
 import java.time.LocalDate;
+
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,28 +44,34 @@ public class ListeMemoireCommandeDAO implements CommandeDAO{
 
 	}
 	
+	//Fonction de verification si le titre de categ existe deja
+	private boolean duplicata(Commande commande) {
+		int id = commande.getIdClient();
+		LocalDate date = commande.getDate(); 
+		
+		for (int i = 0; i < donnees.size(); i++) {
+			if ((donnees.get(i).getIdClient() == id) && (donnees.get(i).getDate().equals(date)))
+				return true;
+		}
+		return false;
+	}
+
 	
 	@Override
-	public boolean create(Commande objet) throws Exception {
-		boolean ok = true;
-		
-		objet.setId(3);
-		// Ne fonctionne que si l'objet metier est bien fait...
-		while (this.donnees.contains(objet)) {
+	public boolean create(Commande commande) throws Exception {
 
-			objet.setId(objet.getId() + 1);
+		commande.setId(3);
+		// Ne fonctionne que si l'objet metier est bien fait...
+		
+		while (donnees.contains(commande)) {
+			commande.setId(commande.getId() + 1);
 		}
 		
-		try {
-			DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().getById(objet.getIdClient());
-		} catch (IllegalArgumentException e) {
-			ok = false;
-		}
-		
-		if (ok)
-			this.donnees.add(objet);
-		
-		return ok;
+		if (!duplicata(commande))
+			donnees.add(commande);
+		else 
+			throw new IllegalArgumentException("Ce client a déjà effectué une commande à cette date !");
+		return true;
 	}
 	
 	@Override
