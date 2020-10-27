@@ -189,7 +189,7 @@ public class PageCommandeController implements Initializable {
 			controller.initData(tabCommande.getSelectionModel().getSelectedItem().getId());
 			
 			//On affiche la fenetre ModifCateg
-			Scene scene = new Scene((AnchorPane) root, 600, 400);
+			Scene scene = new Scene((AnchorPane) root, 600, 350);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Detail d'une commande");

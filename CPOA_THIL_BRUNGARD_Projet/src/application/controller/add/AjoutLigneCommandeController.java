@@ -41,6 +41,7 @@ public class AjoutLigneCommandeController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 		
 		ObservableList<Produit> listeProduit = FXCollections.observableArrayList();
+		lblAffichage.setText("");
 	
 	    try {
 	    	this.editQuantite.setText("");

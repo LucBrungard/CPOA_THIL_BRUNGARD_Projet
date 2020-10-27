@@ -36,6 +36,7 @@ public class EditLigneCommandeController implements Initializable {
 	
 	@Override
     public void initialize(URL location, ResourceBundle resources) {
+		lblAffichage.setText("");
 	}
 	   
 	public void initData(LigneCommande ligneCommande, Commande commande) {

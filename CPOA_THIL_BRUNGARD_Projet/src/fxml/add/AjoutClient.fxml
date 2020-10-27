@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxWidth="-Infinity" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.add.AjoutClientController">
+<AnchorPane maxWidth="-Infinity" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.add.AjoutClientController">
    <children>
       <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -20,9 +20,9 @@
               <columnConstraints>
                 <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="134.0" minWidth="10.0" prefWidth="134.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.0" minWidth="0.0" prefWidth="124.0" />
-                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="471.0" minWidth="0.0" prefWidth="41.0" />
-                  <ColumnConstraints maxWidth="259.0" minWidth="0.0" prefWidth="141.0" />
-                  <ColumnConstraints maxWidth="336.0" minWidth="0.0" prefWidth="263.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="471.0" minWidth="0.0" prefWidth="72.0" />
+                  <ColumnConstraints maxWidth="259.0" minWidth="0.0" prefWidth="73.0" />
+                  <ColumnConstraints maxWidth="336.0" minWidth="0.0" prefWidth="212.0" />
                   <ColumnConstraints maxWidth="62.0" minWidth="0.0" prefWidth="0.0" />
               </columnConstraints>
               <rowConstraints>
@@ -44,12 +44,7 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField fx:id="editNom" maxWidth="-Infinity" prefHeight="31.0" prefWidth="148.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
-                     <GridPane.margin>
-                        <Insets right="10.0" />
-                     </GridPane.margin>
-                  </TextField>
-                  <TextField fx:id="editPrenom" maxWidth="-Infinity" prefHeight="26.0" prefWidth="200.0" GridPane.columnIndex="5">
+                  <TextField fx:id="editNom" maxWidth="-Infinity" prefHeight="31.0" prefWidth="148.0" GridPane.columnIndex="1" GridPane.columnSpan="2">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>

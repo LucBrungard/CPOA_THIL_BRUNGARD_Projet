@@ -54,6 +54,7 @@ public class AjoutCommandeController implements Initializable {
 		ObservableList<Produit> listeProduit = FXCollections.observableArrayList();
 	
 		editDate.setEditable(false);
+		lblAffichage.setText(""); 
 		
 	    try {
 	    	this.editQuantite.setText("");

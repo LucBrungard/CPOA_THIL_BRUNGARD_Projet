@@ -44,6 +44,7 @@ public class AjoutClientController implements Initializable {
 	    	this.editCodePostal.setText("");
 	    	this.editVille.setText("");
 	    	this.editPays.setText("");
+	    	this.lblAffichage.setText("");
 		} catch (Exception e) {
 		}
 	}
@@ -78,8 +79,7 @@ public class AjoutClientController implements Initializable {
 				if (cp>0 && num>0) {
 				Client client = new Client(1, nom, prenom, identifiant, mdp, numero, rue, codePostal, ville, pays);
 				DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().create(client); 
-				this.clientAjout = client;
-				this.lblAffichage.setText(client.toStringUtilisateur()); 
+				this.clientAjout = client; 
 							
 				//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 				Stage stage = (Stage) btnCreer.getScene().getWindow();

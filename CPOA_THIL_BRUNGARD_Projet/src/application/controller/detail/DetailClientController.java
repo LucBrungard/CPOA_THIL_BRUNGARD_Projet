@@ -68,10 +68,10 @@ public class DetailClientController implements Initializable {
 			Node root = fxmlLoader.load();
 			
 			//On affiche la fenetre ModifCateg
-			Scene scene = new Scene((AnchorPane) root, 650, 350);
+			Scene scene = new Scene((AnchorPane) root, 900, 440);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
-			nStage.setTitle("Modififer un client");
+			nStage.setTitle("Commande");
 			nStage.initModality(Modality.APPLICATION_MODAL);
 			
 			//On recupere le controleur de la page ModifCateg.fxml
