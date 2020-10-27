@@ -114,7 +114,6 @@ public class ListeMemoireProduitDAO implements ProduitDAO {
 
 	@Override
 	public boolean delete(Produit objet) {
-
 		// Ne fonctionne que si l'objet metier est bien fait...
 		boolean idx = this.donnees.remove(objet);
 		if (!idx) 

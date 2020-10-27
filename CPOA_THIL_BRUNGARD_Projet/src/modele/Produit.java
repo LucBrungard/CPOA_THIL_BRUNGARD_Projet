@@ -75,7 +75,10 @@ public class Produit {
 	}
 
 	public void setIdCateg(int idCateg) {
-		if (idCateg > 0) this.idCateg = idCateg;
+		if (idCateg > 0) 
+			this.idCateg = idCateg;
+		else 
+			throw new IllegalArgumentException("Veuillez selectionner une categorie !");
 	}
 	
 	@Override

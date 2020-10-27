@@ -1,16 +1,9 @@
 package application.controller.edit;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.CategorieDAO;
-import dao.modele.ProduitDAO;
+import application.controller.MainController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -21,7 +14,7 @@ import javafx.stage.Stage;
 import modele.Categorie;
 import modele.Produit;
 
-public class EditProduitController implements Initializable{
+public class EditProduitController {
 	@FXML private Button btnModif;
 	@FXML private Label lblAffichage;
 	@FXML private TextField editNom;
@@ -30,14 +23,7 @@ public class EditProduitController implements Initializable{
 	@FXML private ChoiceBox<Categorie> cbxCategorie;
 	ObservableList<Categorie> listeCateg = FXCollections.observableArrayList();
 	
-	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
-	CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
-	
 	private Produit selectedItem;
-	
-	@Override
-    public void initialize(URL location, ResourceBundle resources) {
-	}
 	   
 	public void initData(Produit produit) {
 		selectedItem = produit;
@@ -46,8 +32,8 @@ public class EditProduitController implements Initializable{
 		editDesc.setText(produit.getDescription());
 		editTarif.setText(Float.toString(produit.getTarif()));
 		try {
-			cbxCategorie.getItems().setAll(categorieDAO.findAll());
-			cbxCategorie.setValue(categorieDAO.getById(selectedItem.getIdCateg()));
+			cbxCategorie.getItems().setAll(MainController.categorieDAO.findAll());
+			cbxCategorie.setValue(MainController.categorieDAO.getById(selectedItem.getIdCateg()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -60,15 +46,6 @@ public class EditProduitController implements Initializable{
 		String nom = editNom.getText().trim();
 		String desc = editDesc.getText().trim(); 
 		float tarif = 0;
-		
-		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
-		Categorie selectCateg = cbxCategorie.getSelectionModel().getSelectedItem(); 
-		int idCateg = 0;
-		
-		if (selectCateg != null) {
-			idCateg = selectCateg.getId();
-		}
-		
 		//on convertit le tarif qui est en String en int 
 		try {
 			tarif = Float.parseFloat(editTarif.getText().trim());
@@ -77,10 +54,16 @@ public class EditProduitController implements Initializable{
 			this.lblAffichage.setText(e.getMessage());
 		}
 		
+		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
+		int idCateg = 0;
+		if (cbxCategorie.getSelectionModel().getSelectedItem() != null) {
+			idCateg = cbxCategorie.getSelectionModel().getSelectedItem().getId();
+		}
+		
 		try {
 			//On creer dans la DAO l'objet Produit
 			Produit produit = new Produit(selectedItem.getId(), nom, desc, tarif, nom.concat(".png"), idCateg);
-			produitDAO.update(produit);
+			MainController.produitDAO.update(produit);
 			
 			this.selectedItem = produit;
 			

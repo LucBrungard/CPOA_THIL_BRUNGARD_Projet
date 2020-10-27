@@ -63,7 +63,6 @@ public class PageClientController implements Initializable {
 	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
 	
 	
-	
 	//Initialisation des donnees + ajout des listeners
 	public void initData() {
 		this.nomClient.setCellValueFactory(new PropertyValueFactory<>("nom"));
@@ -341,8 +340,4 @@ public class PageClientController implements Initializable {
 	public void setTabClient(TableView<Client> tabClient) {
 		this.tabClient = tabClient;
 	}
-	
-	
-	
-	
 }

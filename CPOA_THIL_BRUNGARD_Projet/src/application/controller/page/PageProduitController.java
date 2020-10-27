@@ -8,11 +8,6 @@ import java.util.ResourceBundle;
 import application.controller.MainController;
 import application.controller.add.AjoutProduitController;
 import application.controller.edit.EditProduitController;
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.CategorieDAO;
-import dao.modele.LigneCommandeDAO;
-import dao.modele.ProduitDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -58,16 +53,11 @@ public class PageProduitController implements Initializable {
 	@FXML private TextField searchTarif;
 	@FXML private TextField searchCateg;
 	
-	@SuppressWarnings("unused")
-	private MainController main;
 	private Produit produit;
-	private ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
-	private CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
-	private LigneCommandeDAO<LigneCommande> ligneCommandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO();
 	
 	public void actualiser() {
 		try {
-			this.tabProduit.getItems().setAll(produitDAO.findAll());
+			this.tabProduit.getItems().setAll(MainController.produitDAO.findAll());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,6 +65,7 @@ public class PageProduitController implements Initializable {
 	
 	//Initialisation des donnees + ajout des listeners
 	public void initData() {
+		
 		//Definit si les boutons sont desactives ou non
 		this.tabProduit.getSelectionModel().selectedItemProperty().addListener(
 				(observale, odlValue, newValue) -> {
@@ -108,7 +99,7 @@ public class PageProduitController implements Initializable {
 		categProduit.setCellValueFactory(new Callback<CellDataFeatures<Produit, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<Produit, String> p) {
 				try {
-					return new ReadOnlyStringWrapper( categorieDAO.getById(p.getValue().getIdCateg()).getTitre() );
+					return new ReadOnlyStringWrapper( MainController.categorieDAO.getById(p.getValue().getIdCateg()).getTitre() );
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -120,7 +111,7 @@ public class PageProduitController implements Initializable {
 				int quantite = 0;
 				int idProduit = p.getValue().getId();
 				try {
-					for (LigneCommande lc : ligneCommandeDAO.findAll()) {
+					for (LigneCommande lc : MainController.ligneCommandeDAO.findAll()) {
 						if (lc.getIdProduit() == idProduit) 
 							quantite += lc.getQuantite();
 					}
@@ -132,7 +123,7 @@ public class PageProduitController implements Initializable {
 		});
 		
 		try {
-			this.tabProduit.getItems().setAll(produitDAO.findAll());
+			this.tabProduit.getItems().setAll(MainController.produitDAO.findAll());
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -144,21 +135,16 @@ public class PageProduitController implements Initializable {
 		initData();
 	}
 	
-
-	public void init(MainController mainController) {
-		main = mainController;
-	}
-	
 	//Renvoie une liste des produits qui possedent un nom correspondant a la demande
 	public ArrayList<Produit> filtrerNom() {
 		String nom = searchNom.getText().trim().toLowerCase();
 		ArrayList<Produit> listeProd = new ArrayList<Produit>();
 		try {
 			if (nom.equals("")) {
-				listeProd.addAll(produitDAO.findAll());
+				listeProd.addAll(MainController.produitDAO.findAll());
 			}
 			else {
-				for (Produit produit : produitDAO.findAll()) {
+				for (Produit produit : MainController.produitDAO.findAll()) {
 					if (produit.getNom().toLowerCase().contains(nom)) {
 						listeProd.add(produit);
 					}
@@ -180,7 +166,7 @@ public class PageProduitController implements Initializable {
 		try {
 			tarif = Float.parseFloat(searchTarif.getText().trim());
 			if (tarif > 0) {
-				for (Produit produit : produitDAO.findAll()) {
+				for (Produit produit : MainController.produitDAO.findAll()) {
 					if (produit.getTarif() <= tarif) {
 						listeProd.add(produit);
 					}
@@ -190,7 +176,7 @@ public class PageProduitController implements Initializable {
 		} catch (Exception e) {
 			if (searchTarif.getText().trim().isEmpty()) {
 				try {
-					listeProd.addAll(produitDAO.findAll());
+					listeProd.addAll(MainController.produitDAO.findAll());
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -206,11 +192,11 @@ public class PageProduitController implements Initializable {
 		ArrayList<Produit> listeProd = new ArrayList<Produit>();
 		try {
 			if (categ.equals("")) {
-				listeProd.addAll(produitDAO.findAll());
+				listeProd.addAll(MainController.produitDAO.findAll());
 			}
 			else {
-				for (Produit produit : produitDAO.findAll()) {
-					if (categorieDAO.getById(produit.getIdCateg()).getTitre().toLowerCase().contains(categ)) {
+				for (Produit produit : MainController.produitDAO.findAll()) {
+					if (MainController.categorieDAO.getById(produit.getIdCateg()).getTitre().toLowerCase().contains(categ)) {
 						listeProd.add(produit);
 					}
 				}
@@ -331,20 +317,24 @@ public class PageProduitController implements Initializable {
 	
 	//Supprime la valeur dans le tableau et dans la dao
 	public void supprProd() {
-		boolean utilise = false;
 		
 		//Ouvre une fenetre d'alerte pour confirer la suppresion
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
 		alert.setContentText("Etes vous certain de supprimer ce produit ?");
 		Optional<ButtonType> result = alert.showAndWait();
+		
 		if (result.get() == ButtonType.OK){
 			try {
-				for (LigneCommande lc : ligneCommandeDAO.findAll()) {
-					if (lc.getIdProduit() == tabProduit.getSelectionModel().getSelectedItem().getId())
+				boolean utilise = false;
+				int i = 0;
+				ArrayList<LigneCommande> listeLc = MainController.ligneCommandeDAO.findAll();
+				while (!utilise && i < listeLc.size()) {
+					if (listeLc.get(i).getIdProduit() == tabProduit.getSelectionModel().getSelectedItem().getId())
 						utilise = true;
+					i+=1;
 				}
-				
+
 				if (utilise) {
 					Alert nonSuppr = new Alert(AlertType.WARNING);
 					nonSuppr.setTitle("Impossibilite de suppression");
@@ -352,7 +342,7 @@ public class PageProduitController implements Initializable {
 					nonSuppr.showAndWait();
 				} 
 				else {
-					produitDAO.delete(produit);
+					MainController.produitDAO.delete(produit);
 					tabProduit.getItems().remove(produit);
 				}
 			} 

@@ -3,10 +3,7 @@ package application.controller.add;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.CategorieDAO;
-import dao.modele.ProduitDAO;
+import application.controller.MainController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -29,8 +26,6 @@ public class AjoutProduitController implements Initializable{
 	@FXML private TextField editTarif;
 	@FXML private ChoiceBox<Categorie> cbxCategorie;
 	
-	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
-	CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
 	private Produit produitAjout;
 	
 	@Override
@@ -40,7 +35,7 @@ public class AjoutProduitController implements Initializable{
 	    	this.editNom.setText("");
 	    	this.editDesc.setText("");
 	    	this.editTarif.setText("");
-	    	for (Categorie categorie : categorieDAO.findAll()) {
+	    	for (Categorie categorie : MainController.categorieDAO.findAll()) {
 	    		listeCateg.add(categorie);
 	    	}
 			this.cbxCategorie.setItems( listeCateg );
@@ -55,15 +50,6 @@ public class AjoutProduitController implements Initializable{
 		String nom = editNom.getText().trim();
 		String desc = editDesc.getText().trim(); 
 		float tarif = 0;
-		
-		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
-		Categorie selectCateg = cbxCategorie.getSelectionModel().getSelectedItem(); 
-		int idCateg = 0;
-		
-		if (selectCateg != null) {
-			idCateg = selectCateg.getId();
-		}
-		
 		//on convertit le tarif qui est en String en int 
 		try {
 			tarif = Float.parseFloat(editTarif.getText().trim());
@@ -72,12 +58,22 @@ public class AjoutProduitController implements Initializable{
 			this.lblAffichage.setText(e.getMessage());
 		}
 		
+		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
+		int idCateg = 0;
+		
+		if (cbxCategorie.getSelectionModel().getSelectedItem() != null) {
+			idCateg = cbxCategorie.getSelectionModel().getSelectedItem().getId();
+		}
+		
+		
+		
 		//On creer le produit. Si erreur, elle sera affichee dans le label a cet effet
 		//On enregistre l'instance de produit que l'on vient de creer pour la recuperer sur la page PageProduitController
 		try {
 			//On creer dans la DAO l'objet Produit
 			Produit produit = new Produit(1, nom, desc, tarif, nom.concat(".png"), idCateg);
-			produitDAO.create(produit);
+			
+			MainController.produitDAO.create(produit);
 			
 			this.produitAjout = produit;
 			
