@@ -3,9 +3,7 @@ package application.controller.edit;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.CategorieDAO;
+import application.controller.MainController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -23,8 +21,6 @@ public class EditCategorieController implements Initializable {
 	@FXML private Label lblAffichage;
 	
 	private Categorie selectedItem;
-	
-	CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -49,7 +45,7 @@ public class EditCategorieController implements Initializable {
 			Categorie categorie = new Categorie(selectedItem.getId(), titre, visuel);
 			
 			//Si la modification porte une erreur alors on va dans le catch et "selectedItem" n'est pas modifie
-			categorieDAO.update(categorie);
+			MainController.categorieDAO.update(categorie);
 			this.selectedItem = categorie;
 			
 			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre

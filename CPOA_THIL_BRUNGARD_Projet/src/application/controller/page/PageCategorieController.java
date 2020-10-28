@@ -7,10 +7,6 @@ import java.util.ResourceBundle;
 import application.controller.MainController;
 import application.controller.add.AjoutCategorieController;
 import application.controller.edit.EditCategorieController;
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.CategorieDAO;
-import dao.modele.ProduitDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -45,17 +41,15 @@ public class PageCategorieController implements Initializable {
 	@FXML private TextField searchTitre;
 	@FXML private TextField searchVisuel;
 	
-	@SuppressWarnings("unused")
-	private MainController main;
 	private Categorie categorie;
-	CategorieDAO categDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
-	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
 	
-	//Instancie la classe MainController
-	public void init(MainController mainController) {
-		main = mainController;
+	public void actualiser() {
+		try {
+			this.tabCateg.getItems().setAll(MainController.categorieDAO.findAll());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
 	
 	//Initialisation des donnees (tableau + boutons) + rajout des listeners sur les tableaux
 	public void initData() {
@@ -91,7 +85,7 @@ public class PageCategorieController implements Initializable {
 		
 		//On remplit le tableau des donnees necessaires
 		try {
-			this.tabCateg.getItems().addAll(categDAO.findAll());
+			this.tabCateg.getItems().addAll(MainController.categorieDAO.findAll());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -148,7 +142,7 @@ public class PageCategorieController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
-				for (Produit produit : produitDAO.findAll()) {
+				for (Produit produit : MainController.produitDAO.findAll()) {
 					if (produit.getIdCateg() == tabCateg.getSelectionModel().getSelectedItem().getId())
 						utilise = true;
 				}
@@ -160,7 +154,7 @@ public class PageCategorieController implements Initializable {
 					nonSuppr.showAndWait();
 				} 
 				else  {
-					categDAO.delete(categorie);
+					MainController.categorieDAO.delete(categorie);
 					this.tabCateg.getItems().remove(categorie);
 				}
 				
@@ -216,9 +210,9 @@ public class PageCategorieController implements Initializable {
 		
 		try {
 			if (titre.equals("")) 
-					listeCateg.addAll(categDAO.findAll());
+					listeCateg.addAll(MainController.categorieDAO.findAll());
 			else {
-				for (Categorie categorie : categDAO.findAll()) {
+				for (Categorie categorie : MainController.categorieDAO.findAll()) {
 					if (categorie.getTitre().toLowerCase().contains(titre)) {
 						listeCateg.add(categorie);
 					}
@@ -239,9 +233,9 @@ public class PageCategorieController implements Initializable {
 		
 		try {
 			if (visuel.equals("")) 
-					listeCateg.addAll(categDAO.findAll());
+					listeCateg.addAll(MainController.categorieDAO.findAll());
 			else {
-				for (Categorie categorie : categDAO.findAll()) {
+				for (Categorie categorie : MainController.categorieDAO.findAll()) {
 					if (categorie.getVisuel().toLowerCase().contains(visuel)) 
 						listeCateg.add(categorie);
 				}

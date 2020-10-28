@@ -3,9 +3,7 @@ package application.controller.add;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.CategorieDAO;
+import application.controller.MainController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -20,8 +18,6 @@ public class AjoutCategorieController implements Initializable {
 	@FXML private TextField editVisuel;
 	@FXML private Button btnCreer;
 	@FXML private Label lblAffichage;
-	
-	CategorieDAO categorieDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCategorieDAO();
 	
 	private Categorie categorie;
 	
@@ -44,7 +40,7 @@ public class AjoutCategorieController implements Initializable {
 		try {
 			//On creer dans la DAO l'objet Categorie
 			this.categorie = new Categorie(1, titre, visuel);
-			categorieDAO.create(categorie);
+			MainController.categorieDAO.create(categorie);
 			
 			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 			Stage stage = (Stage) btnCreer.getScene().getWindow();

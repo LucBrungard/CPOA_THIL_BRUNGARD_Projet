@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import connexion.Connexion;
@@ -33,13 +34,14 @@ public class MySQLCategorieDAO implements CategorieDAO {
 		int nbLignes = 0;
 		
 		//Pour ne pas creer de duplicata
-		PreparedStatement verif = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE titre=" + categorie.getTitre());
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE titre=?");
+		verif.setString(1, categorie.getTitre());
 		ResultSet ligneVerif = verif.executeQuery();
 		
 		if (ligneVerif.next()) 
 			throw new IllegalArgumentException("Cette categorie existe deja !");
 		else {
-			PreparedStatement requete = laConnexion.prepareStatement("insert into `Categorie` (`titre`, `visuel`) values (?, ?);");
+			PreparedStatement requete = laConnexion.prepareStatement("insert into `Categorie` (`titre`, `visuel`) values (?, ?);", Statement.RETURN_GENERATED_KEYS);
 			requete.setString(1,categorie.getTitre());
 			requete.setString(2,categorie.getVisuel());
 			
@@ -47,6 +49,11 @@ public class MySQLCategorieDAO implements CategorieDAO {
 			
 			if (nbLignes == 0)
 				throw new IllegalArgumentException("\nEchec de la creation");
+			
+			try (ResultSet generatedKeys = requete.getGeneratedKeys()) {
+				if (generatedKeys.next()) 
+					categorie.setId(generatedKeys.getInt(1));
+			}
 		}
 		
 		if (laConnexion != null)
@@ -62,13 +69,15 @@ public class MySQLCategorieDAO implements CategorieDAO {
 		int nbLignes = 0;
 		
 		//Pour ne pas creer de duplicata
-		PreparedStatement verif = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE id_categorie=" + categorie.getId());
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE id_categorie=?");
+		verif.setInt(1, categorie.getId());
 		ResultSet ligneVerif = verif.executeQuery();
 
 		if (ligneVerif.next()) {
 			//Si le titre de la categorie a change on regarde s'il existe deja
 			if ( !categorie.getTitre().equals(ligneVerif.getString(1)) ) {
-				PreparedStatement existe = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE titre=" + categorie.getTitre());
+				PreparedStatement existe = laConnexion.prepareStatement("SELECT titre FROM Categorie WHERE titre=?");
+				existe.setString(1, categorie.getTitre());
 				ResultSet existeLigne = existe.executeQuery();
 				
 				if (existeLigne.next()) 
