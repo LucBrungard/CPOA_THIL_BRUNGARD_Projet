@@ -1,14 +1,12 @@
 package application.controller.detail;
 
 import java.net.URL
+
 ;
 
 
 import java.util.ResourceBundle;
 import application.controller.page.PageCommandeController;
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.ClientDAO;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -34,7 +32,6 @@ public class DetailClientController implements Initializable {
 	@FXML private Label lblPays;
 	@FXML private Button voirCommande; 
 	
-	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
 	private Client selectedItem;
 	
 	@Override
@@ -76,6 +73,7 @@ public class DetailClientController implements Initializable {
 			
 			//On recupere le controleur de la page ModifCateg.fxml
 			PageCommandeController controller = fxmlLoader.getController();
+			controller.getActualiser().setVisible(false);
 			
 			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
 			controller.initData(selectedItem); 

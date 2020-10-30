@@ -3,6 +3,7 @@ package application.controller.page;
 import java.net.URL;
 
 
+
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
@@ -14,8 +15,6 @@ import application.controller.detail.DetailCommandeController;
 import application.controller.edit.EditCommandeController;
 import dao.Persistance;
 import dao.factory.DAOFactory;
-import dao.modele.ClientDAO;
-import dao.modele.CommandeDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -52,21 +51,26 @@ public class PageCommandeController implements Initializable {
 	@FXML private Button deleteCommande;
 	@FXML private Button editCommande;
 	@FXML private Button detailCommande;
+	@FXML Button actualiser;
 	
 	@SuppressWarnings("unused")
 	private MainController main;
-	private Commande commande; 
-	
-	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
-	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
-	
+	private Commande commande;
 	private Client client=null; 
+	
+	public void actualiser() {
+		try {
+			this.tabCommande.getItems().setAll(MainController.commandeDAO.findAll());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void initData(Client selectedClient) {
 		client = selectedClient; 
 		 if (client!=null) {
 			 try {
-				for (Commande commande : commandeDAO.findAll()) {
+				for (Commande commande : MainController.commandeDAO.findAll()) {
 					 if (commande.getIdClient() != client.getId()) this.tabCommande.getItems().remove(commande); 
 				 }
 			} catch (Exception e) {
@@ -84,7 +88,7 @@ public class PageCommandeController implements Initializable {
 		this.clientCommande.setCellValueFactory(new Callback<CellDataFeatures<Commande, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<Commande, String> p) {
 				try {
-					return new ReadOnlyStringWrapper(clientDAO.getById(p.getValue().getIdClient()).getNom());
+					return new ReadOnlyStringWrapper(MainController.clientDAO.getById(p.getValue().getIdClient()).getNom());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -95,10 +99,10 @@ public class PageCommandeController implements Initializable {
 	
 			
 		 try {
-			 this.tabCommande.getItems().addAll(commandeDAO.findAll()); 
+			 this.tabCommande.getItems().addAll(MainController.commandeDAO.findAll()); 
 			 
 			 if (client!=null) {
-				 for (Commande commande : commandeDAO.findAll()) {
+				 for (Commande commande : MainController.commandeDAO.findAll()) {
 					 if (commande.getIdClient() != client.getId()) this.tabCommande.getItems().remove(commande); 
 				 }
 			 }
@@ -249,7 +253,7 @@ public class PageCommandeController implements Initializable {
 				for (Map.Entry mapentry : commande.getLigneCommande().entrySet()) {
 					DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO().delete((LigneCommande) mapentry.getValue());
 		        }
-				commandeDAO.delete(commande);
+				MainController.commandeDAO.delete(commande);
 				tabCommande.getItems().remove(commande);
 				tabCommande.getSelectionModel().clearSelection();
 			} 
@@ -260,6 +264,14 @@ public class PageCommandeController implements Initializable {
 		else {
 			tabCommande.getSelectionModel().clearSelection();
 		}
+	}
+
+	public Button getActualiser() {
+		return actualiser;
+	}
+
+	public void setActualiser(Button actualiser) {
+		this.actualiser = actualiser;
 	}
 	
 

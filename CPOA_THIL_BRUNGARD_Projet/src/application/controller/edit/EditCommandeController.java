@@ -2,12 +2,10 @@ package application.controller.edit;
 
 import java.net.URL;
 
+
 import java.util.ResourceBundle;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.ClientDAO;
-import dao.modele.CommandeDAO;
+import application.controller.MainController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -30,9 +28,6 @@ public class EditCommandeController implements Initializable{
 	@FXML private ChoiceBox<Client> cbxClient;
 	ObservableList<Client> listeClient = FXCollections.observableArrayList();
 	
-	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
-	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
-	
 	private Commande selectedItem;
 	
 	@Override
@@ -47,7 +42,7 @@ public class EditCommandeController implements Initializable{
 		editDate.setEditable(false);
  
     	try {
-			for (Client client : clientDAO.findAll()) {
+			for (Client client : MainController.clientDAO.findAll()) {
 				listeClient.add(client);
 			}
 		} catch (Exception e1) {
@@ -57,8 +52,8 @@ public class EditCommandeController implements Initializable{
 		
 		
 		try {
-			cbxClient.getItems().setAll(clientDAO.findAll());
-			cbxClient.setValue(clientDAO.getById(selectedItem.getIdClient()));
+			cbxClient.getItems().setAll(MainController.clientDAO.findAll());
+			cbxClient.setValue(MainController.clientDAO.getById(selectedItem.getIdClient()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -81,7 +76,7 @@ public class EditCommandeController implements Initializable{
 		try {
 			//On creer dans la DAO l'objet Produit
 			Commande commande = new Commande(selectedItem.getId(), editDate.getValue(), idClient, selectedItem.getLigneCommande()); 
-			commandeDAO.update(commande); 
+			MainController.commandeDAO.update(commande); 
 			
 			this.selectedItem = commande;
 			

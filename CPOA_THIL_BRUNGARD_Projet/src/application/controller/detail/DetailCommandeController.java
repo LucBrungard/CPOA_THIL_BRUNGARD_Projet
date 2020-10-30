@@ -2,6 +2,7 @@ package application.controller.detail;
 
 import java.net.URL;
 
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,11 +14,6 @@ import application.controller.MainController;
 import application.controller.add.AjoutLigneCommandeController;
 import application.controller.edit.EditLigneCommandeController;
 import application.controller.page.PageProduitController;
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.CommandeDAO;
-import dao.modele.LigneCommandeDAO;
-import dao.modele.ProduitDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -47,7 +43,7 @@ public class DetailCommandeController implements Initializable {
 	
 	@FXML private TableView<LigneCommande> tabLigneCommande;
 	@FXML private TableColumn<LigneCommande, String> idProduit = new TableColumn<LigneCommande, String>("Identifiant Produit");
-	@FXML private TableColumn<LigneCommande, Integer> quantite = new TableColumn<LigneCommande, Integer>("Quantité");
+	@FXML private TableColumn<LigneCommande, Integer> quantite = new TableColumn<LigneCommande, Integer>("Quantite");
 	@FXML private TableColumn<LigneCommande, String> prixUnitaire = new TableColumn<LigneCommande, String>("Prix Unitaire");
 	
 	@FXML private Button addLigneCommande;
@@ -58,10 +54,7 @@ public class DetailCommandeController implements Initializable {
 	private MainController main;
 	private Commande commande; 
 	private LigneCommande selectedItem; 
-	
-	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
-	LigneCommandeDAO<LigneCommande> ligneCommandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO();
-	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
+
 	
 	public void initData() {
 	}
@@ -70,25 +63,25 @@ public class DetailCommandeController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		this.tabLigneCommande.getSelectionModel().selectedItemProperty().addListener(
-				(observale, odlValue, newValue) -> {
-					this.addLigneCommande.setDisable(newValue != null); 
-					this.deleteLigneCommande.setDisable(newValue == null);
-					this.editLigneCommande.setDisable(newValue == null);
-				});
+			(observale, odlValue, newValue) -> {
+				this.addLigneCommande.setDisable(newValue != null); 
+				this.deleteLigneCommande.setDisable(newValue == null);
+				this.editLigneCommande.setDisable(newValue == null);
+			});
 		
 		//event qui annule la selection actuelle de la tableView si on selectionne une ligne vide
-				this.tabLigneCommande.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
-				    Node source = evt.getPickResult().getIntersectedNode();
-				   
-				    // move up through the node hierarchy until a TableRow or scene root is found 
-				    while (source != null && !(source instanceof TableRow)) {
-				        source = source.getParent();
-				    }
+		this.tabLigneCommande.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
+		    Node source = evt.getPickResult().getIntersectedNode();
+		   
+		    // move up through the node hierarchy until a TableRow or scene root is found 
+		    while (source != null && !(source instanceof TableRow)) {
+		        source = source.getParent();
+		    }
 
-				    // clear selection on click anywhere but on a filled row
-				    if (source == null || (source instanceof TableRow && ((TableRow<?>) source).isEmpty())) {
-				    	tabLigneCommande.getSelectionModel().clearSelection();
-				    }}); 
+		    // clear selection on click anywhere but on a filled row
+		    if (source == null || (source instanceof TableRow && ((TableRow<?>) source).isEmpty())) {
+		    	tabLigneCommande.getSelectionModel().clearSelection();
+		    }}); 
 		
 		this.deleteLigneCommande.setDisable(true);
 		this.editLigneCommande.setDisable(true);
@@ -104,7 +97,7 @@ public class DetailCommandeController implements Initializable {
 		this.idProduit.setCellValueFactory(new Callback<CellDataFeatures<LigneCommande, String>, ObservableValue<String>>() {
 			public ObservableValue<String> call(CellDataFeatures<LigneCommande, String> p) {
 				try {
-					return new ReadOnlyStringWrapper(produitDAO.getById(p.getValue().getIdProduit()).getNom());
+					return new ReadOnlyStringWrapper(MainController.produitDAO.getById(p.getValue().getIdProduit()).getNom());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -116,7 +109,7 @@ public class DetailCommandeController implements Initializable {
 		
 		commande =null;
 		try {
-			commande = commandeDAO.getById(i);
+			commande = MainController.commandeDAO.getById(i);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -188,8 +181,8 @@ public class DetailCommandeController implements Initializable {
 					
 				}
 				Commande c = new Commande(commande.getId(), commande.getDate(), commande.getIdClient(), newLigneCommande);
-				commandeDAO.update(c); 
-				ligneCommandeDAO.delete(selectedItem);
+				MainController.commandeDAO.update(c); 
+				MainController.ligneCommandeDAO.delete(selectedItem);
 				tabLigneCommande.getItems().remove(selectedItem);
 				tabLigneCommande.getSelectionModel().clearSelection();
 				

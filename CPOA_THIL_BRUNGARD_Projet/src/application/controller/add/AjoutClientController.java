@@ -3,10 +3,10 @@ package application.controller.add;
 import java.net.URL;
 
 
+
 import java.util.ResourceBundle;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
+import application.controller.MainController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -78,7 +78,7 @@ public class AjoutClientController implements Initializable {
 			try {
 				if (cp>0 && num>0) {
 				Client client = new Client(1, nom, prenom, identifiant, mdp, numero, rue, codePostal, ville, pays);
-				DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO().create(client); 
+				MainController.clientDAO.create(client); 
 				this.clientAjout = client; 
 							
 				//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre

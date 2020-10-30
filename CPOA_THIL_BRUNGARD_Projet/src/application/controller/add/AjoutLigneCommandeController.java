@@ -1,15 +1,12 @@
 package application.controller.add;
 
 import java.net.URL;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.CommandeDAO;
-import dao.modele.LigneCommandeDAO;
-import dao.modele.ProduitDAO;
+import application.controller.MainController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -31,9 +28,6 @@ public class AjoutLigneCommandeController implements Initializable {
 	@FXML private TextField editQuantite; 
 	@FXML private ChoiceBox<Produit> cbxProduit;
 	
-	LigneCommandeDAO<LigneCommande> ligneCommandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO();
-	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
-	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
 	private LigneCommande ligneCommandeAjout;
 	private Commande selectedItem; 
 	
@@ -46,7 +40,7 @@ public class AjoutLigneCommandeController implements Initializable {
 	    try {
 	    	this.editQuantite.setText("");
 	 
-	    	for (Produit produit : produitDAO.findAll()) {
+	    	for (Produit produit : MainController.produitDAO.findAll()) {
 	    		listeProduit.add(produit);
 	    	}
 			this.cbxProduit.setItems(listeProduit); 
@@ -88,15 +82,15 @@ public class AjoutLigneCommandeController implements Initializable {
 		try {
 			
 			//On creer dans la DAO l'objet Produit
-			LigneCommande ligneCommande = new LigneCommande(selectedItem.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif());
-			ligneCommandeDAO.create(ligneCommande); 
+			LigneCommande ligneCommande = new LigneCommande(selectedItem.getId(), idProduit, quantite, MainController.produitDAO.getById(idProduit).getTarif());
+			MainController.ligneCommandeDAO.create(ligneCommande); 
 			
 			LocalDate date = selectedItem.getDate(); 
 			int client = selectedItem.getIdClient(); 
 			HashMap<Produit, LigneCommande> lc = selectedItem.getLigneCommande(); 
-			lc.put(produitDAO.getById(idProduit), ligneCommande); 
+			lc.put(MainController.produitDAO.getById(idProduit), ligneCommande); 
 			Commande commande = new Commande(selectedItem.getId(), date, client, lc);
-			commandeDAO.update(commande);
+			MainController.commandeDAO.update(commande);
 			
 			this.ligneCommandeAjout = ligneCommande;
 		

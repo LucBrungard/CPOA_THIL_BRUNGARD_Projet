@@ -12,17 +12,17 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxWidth="-Infinity" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.edit.EditClientController">
+<AnchorPane maxWidth="-Infinity" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.edit.EditClientController">
    <children>
       <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <GridPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="300.0">
               <columnConstraints>
                 <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="134.0" minWidth="10.0" prefWidth="134.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.0" minWidth="0.0" prefWidth="107.0" />
-                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="471.0" minWidth="0.0" prefWidth="115.0" />
-                  <ColumnConstraints maxWidth="259.0" minWidth="0.0" prefWidth="75.0" />
-                  <ColumnConstraints maxWidth="293.0" minWidth="0.0" prefWidth="287.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.0" minWidth="0.0" prefWidth="112.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="471.0" minWidth="0.0" prefWidth="81.0" />
+                  <ColumnConstraints maxWidth="259.0" minWidth="0.0" prefWidth="88.0" />
+                  <ColumnConstraints maxWidth="293.0" minWidth="0.0" prefWidth="228.0" />
                   <ColumnConstraints maxWidth="62.0" minWidth="0.0" prefWidth="0.0" />
               </columnConstraints>
               <rowConstraints>
@@ -44,12 +44,7 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField fx:id="editNom" maxWidth="-Infinity" prefHeight="26.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
-                     <GridPane.margin>
-                        <Insets right="10.0" />
-                     </GridPane.margin>
-                  </TextField>
-                  <TextField fx:id="editPrenom" maxWidth="-Infinity" prefHeight="26.0" prefWidth="200.0" GridPane.columnIndex="5">
+                  <TextField fx:id="editNom" maxWidth="-Infinity" prefHeight="31.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.columnSpan="3">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
@@ -69,7 +64,7 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </TextField>
-                  <TextField fx:id="editCodePostal" maxWidth="-Infinity" prefHeight="31.0" prefWidth="98.0" promptText="CodePostal" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                  <TextField fx:id="editCodePostal" maxWidth="-Infinity" prefHeight="31.0" prefWidth="98.0" promptText="CodePostal" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
@@ -89,7 +84,7 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </TextField>
-                  <TextField fx:id="editPrenom" maxWidth="-Infinity" prefHeight="26.0" prefWidth="200.0" GridPane.columnIndex="4" />
+                  <TextField fx:id="editPrenom" maxWidth="-Infinity" prefHeight="31.0" prefWidth="175.0" GridPane.columnIndex="4" />
                   <Label text="e-mail :" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets right="10.0" />

@@ -18,7 +18,7 @@ public class Main extends Application{
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			Scene scene = new Scene((AnchorPane) root, 900, 440);
+			Scene scene = new Scene((AnchorPane) root, 900, 485);
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
 			primaryStage.setTitle("Ma premiere fenetre JavaFX");

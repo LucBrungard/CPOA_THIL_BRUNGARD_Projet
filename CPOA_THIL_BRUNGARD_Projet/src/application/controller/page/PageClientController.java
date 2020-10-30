@@ -2,6 +2,7 @@ package application.controller.page;
 
 import java.net.URL;
 
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -10,10 +11,6 @@ import application.controller.MainController;
 import application.controller.add.AjoutClientController;
 import application.controller.detail.DetailClientController;
 import application.controller.edit.EditClientController;
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.ClientDAO;
-import dao.modele.CommandeDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -59,8 +56,13 @@ public class PageClientController implements Initializable {
 	private MainController main;
 	private Client client; 
 	
-	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
-	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
+	public void actualiser() {
+		try {
+			this.tabClient.getItems().setAll(MainController.clientDAO.findAll());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	//Initialisation des donnees + ajout des listeners
@@ -72,7 +74,7 @@ public class PageClientController implements Initializable {
 		this.paysClient.setCellValueFactory(new PropertyValueFactory<>("pays"));
 		
 		try {
-			this.tabClient.getItems().addAll(clientDAO.findAll());
+			this.tabClient.getItems().addAll(MainController.clientDAO.findAll());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -130,7 +132,7 @@ public class PageClientController implements Initializable {
 			AjoutClientController controller = fxmlLoader.getController();
 			
 			//On affiche la fenetre AjoutProduit
-			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			Scene scene = new Scene((AnchorPane) root, 600, 400);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Creer un client");
@@ -162,7 +164,7 @@ public class PageClientController implements Initializable {
 			controller.initData(tabClient.getSelectionModel().getSelectedItem());
 			
 			//On affiche la fenetre ModifCateg
-			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			Scene scene = new Scene((AnchorPane) root, 600, 400);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Modifier un client");
@@ -195,7 +197,7 @@ public class PageClientController implements Initializable {
 			controller.initData(tabClient.getSelectionModel().getSelectedItem());
 			
 			//On affiche la fenetre ModifCateg
-			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			Scene scene = new Scene((AnchorPane) root, 600, 400);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Détail d'un client");
@@ -220,7 +222,7 @@ public class PageClientController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
-				for (Commande c : commandeDAO.findAll()) {
+				for (Commande c : MainController.commandeDAO.findAll()) {
 					if (c.getIdClient() == tabClient.getSelectionModel().getSelectedItem().getId())
 						utilise = true;
 				}
@@ -232,7 +234,7 @@ public class PageClientController implements Initializable {
 					nonSuppr.showAndWait();
 				} 
 				else {
-					clientDAO.delete(client); 
+					MainController.clientDAO.delete(client); 
 					tabClient.getItems().remove(client);
 				}
 				
@@ -252,10 +254,10 @@ public class PageClientController implements Initializable {
 		ArrayList<Client> listeClient = new ArrayList<Client>();
 		try {
 			if (nom.equals("")) {
-				listeClient.addAll(clientDAO.findAll());
+				listeClient.addAll(MainController.clientDAO.findAll());
 			}
 			else {
-				for (Client client : clientDAO.findAll()) {
+				for (Client client : MainController.clientDAO.findAll()) {
 					if (client.getNom().toLowerCase().contains(nom)) {
 						listeClient.add(client);
 					}

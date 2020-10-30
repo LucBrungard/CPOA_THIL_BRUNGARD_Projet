@@ -2,16 +2,12 @@ package application.controller.add;
 
 import java.net.URL;
 
+
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.ClientDAO;
-import dao.modele.CommandeDAO;
-import dao.modele.LigneCommandeDAO;
-import dao.modele.ProduitDAO;
+import application.controller.MainController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -40,10 +36,6 @@ public class AjoutCommandeController implements Initializable {
 	@FXML private ChoiceBox<Client> cbxClient;
 	@FXML private ChoiceBox<Produit> cbxProduit;
 	
-	CommandeDAO commandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getCommandeDAO();
-	LigneCommandeDAO<LigneCommande> ligneCommandeDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO();
-	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
-	ProduitDAO produitDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getProduitDAO();
 	private Commande commandeAjout;
 	
 	
@@ -59,12 +51,12 @@ public class AjoutCommandeController implements Initializable {
 	    try {
 	    	this.editQuantite.setText("");
 	 
-	    	for (Client client : clientDAO.findAll()) {
+	    	for (Client client : MainController.clientDAO.findAll()) {
 	    		listeClient.add(client);
 	    	}
 			this.cbxClient.setItems(listeClient); 
 			
-			for (Produit produit : produitDAO.findAll()) {
+			for (Produit produit : MainController.produitDAO.findAll()) {
 	    		listeProduit.add(produit);
 	    	}
 			this.cbxProduit.setItems( listeProduit );
@@ -111,10 +103,10 @@ public class AjoutCommandeController implements Initializable {
 				
 				HashMap<Produit, LigneCommande> ligneCommande = new HashMap<Produit, LigneCommande>(); 
 				Commande commande = new Commande(1, editDate.getValue(), idClient, ligneCommande);
-				commandeDAO.create(commande);
-				LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif());
-				ligneCommande.put(produitDAO.getById(idProduit), lc); 
-				ligneCommandeDAO.create(lc); 
+				MainController.commandeDAO.create(commande);
+				LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, MainController.produitDAO.getById(idProduit).getTarif());
+				ligneCommande.put(MainController.produitDAO.getById(idProduit), lc); 
+				MainController.ligneCommandeDAO.create(lc); 
 				
 				this.commandeAjout = commande;
 				
@@ -138,12 +130,12 @@ public class AjoutCommandeController implements Initializable {
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.get() == ButtonType.OK){
 				try {
-					for (Commande commande : commandeDAO.findAll()) {
+					for (Commande commande : MainController.commandeDAO.findAll()) {
 						if ((commande.getIdClient() == idClient) && (commande.getDate().equals(editDate.getValue()))) {
-							LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, produitDAO.getById(idProduit).getTarif()); 
-							ligneCommandeDAO.create(lc); 
-							commande.getLigneCommande().put(produitDAO.getById(idProduit), lc); 
-							commandeDAO.update(commande); 
+							LigneCommande lc = new LigneCommande(commande.getId(), idProduit, quantite, MainController.produitDAO.getById(idProduit).getTarif()); 
+							MainController.ligneCommandeDAO.create(lc); 
+							commande.getLigneCommande().put(MainController.produitDAO.getById(idProduit), lc); 
+							MainController.commandeDAO.update(commande); 
 							//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 							Stage stage = (Stage) btnCreer.getScene().getWindow();
 							stage.close();

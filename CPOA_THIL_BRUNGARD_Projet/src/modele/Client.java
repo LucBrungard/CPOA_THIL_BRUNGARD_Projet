@@ -65,7 +65,7 @@ public class Client {
 
 	public void setIdentifiant(String identifiant) {
 		if (identifiant == null || identifiant.trim().length() == 0) {
-			throw new IllegalArgumentException("Identifiant vide !");
+			throw new IllegalArgumentException("Adresse mail vide !");
 		}
 		this.identifiant= identifiant;
 	}
@@ -91,7 +91,7 @@ public class Client {
 
 	public void setNumero(String numero) {
 		if (numero == null || numero.trim().length() == 0) {
-			throw new IllegalArgumentException("Numéro vide !");
+			throw new IllegalArgumentException("Numero vide !");
 		}
 		this.numero= numero;
 	}

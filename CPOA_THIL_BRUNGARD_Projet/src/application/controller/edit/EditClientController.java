@@ -3,11 +3,10 @@ package application.controller.edit;
 import java.net.URL;
 
 
+
 import java.util.ResourceBundle;
 
-import dao.Persistance;
-import dao.factory.DAOFactory;
-import dao.modele.ClientDAO;
+import application.controller.MainController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -31,8 +30,7 @@ public class EditClientController implements Initializable {
 	@FXML private TextField editCodePostal;
 	@FXML private TextField editVille;
 	@FXML private TextField editPays;
-	
-	ClientDAO clientDAO = DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getClientDAO();
+
 	private Client selectedItem;
 	
 	@Override
@@ -85,7 +83,7 @@ public class EditClientController implements Initializable {
 			if (cp>0 && num>0) {
 			//On creer dans la DAO l'objet Produit
 			Client client = new Client(selectedItem.getId(), nom, prenom, identifiant, mdp, numero, rue, codePostal, ville, pays);
-			clientDAO.update(client);
+			MainController.clientDAO.update(client);
 			
 			this.selectedItem = client;
 			

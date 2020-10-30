@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane minHeight="400.0" minWidth="900.0" prefHeight="400.0" prefWidth="700.0" stylesheets="@../../css/pageCss.css" xmlns="http://javafx.com/javafx/8.0.202" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.page.PageClientController">
+<AnchorPane minHeight="400.0" minWidth="900.0" prefHeight="400.0" prefWidth="700.0" stylesheets="@../../css/pageCss.css" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.page.PageClientController">
    <children>
       <HBox minHeight="400.0" minWidth="900.0" prefHeight="400.0" prefWidth="700.0">
          <children>
@@ -49,6 +49,15 @@
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../image/details.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="actualiser" minHeight="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#actualiser" prefHeight="60.0" prefWidth="60.0">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../image/actualiser.png" />
                            </image>
                         </ImageView>
                      </graphic>
