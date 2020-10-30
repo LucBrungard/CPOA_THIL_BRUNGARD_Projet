@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,7 +34,7 @@ public class MySQLCommandeDAO implements CommandeDAO {
 		
 		int nbLignes = 0;
 		
-		PreparedStatement requete = laConnexion.prepareStatement("insert into `Commande` (`date_commande`, `id_client`) values (?, ?)");
+		PreparedStatement requete = laConnexion.prepareStatement("insert into `Commande` (`date_commande`, `id_client`) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
 					
 		requete.setDate(1, java.sql.Date.valueOf(commande.getDate()));
 		requete.setInt(2, commande.getIdClient());
@@ -54,10 +55,17 @@ public class MySQLCommandeDAO implements CommandeDAO {
 			throw new IllegalArgumentException("\nIdentifiant de client inexistant");
 		
 		
+		
+		
 		nbLignes = requete.executeUpdate();
 		
 		if (nbLignes == 0)
 			throw new IllegalArgumentException("\nErreur de la creation de la commande");
+		
+		try (ResultSet generatedKeys = requete.getGeneratedKeys()) {
+            if (generatedKeys.next()) 
+                commande.setId(generatedKeys.getInt(1));
+        }
 		
 		if (laConnexion != null)
 			laConnexion.close();
@@ -113,11 +121,11 @@ public class MySQLCommandeDAO implements CommandeDAO {
 		PreparedStatement requete = laConnexion.prepareStatement("delete from `Commande` where id_commande=?");
 		requete.setInt(1, commande.getId());
 		
-		PreparedStatement supprLc = laConnexion.prepareStatement("delete from `Ligne_commande` where id_commande=?");
-		supprLc.setInt(1, commande.getId());
+		//PreparedStatement supprLc = laConnexion.prepareStatement("delete from `Ligne_commande` where id_commande=?");
+		//supprLc.setInt(1, commande.getId());
 		
 		nbLignesCom = requete.executeUpdate();
-		supprLc.executeUpdate();;
+		//supprLc.executeUpdate();;
 		
 		if (nbLignesCom == 0)
 			throw new IllegalArgumentException("\nTentative de suppression d'une commande inexistante");
@@ -142,7 +150,7 @@ public class MySQLCommandeDAO implements CommandeDAO {
 			
 		if (res.next()) {
 			//requete pour obtenir toute les lignes de commandes concernees par cette commande
-			PreparedStatement requeteLc = laConnexion.prepareStatement("select * from `Ligne_Commande` where id_commande=" + id);
+			PreparedStatement requeteLc = laConnexion.prepareStatement("select * from `Ligne_commande` where id_commande=" + id);
 			ResultSet resLc = requeteLc.executeQuery();
 			
 			while (resLc.next()) {
@@ -184,7 +192,7 @@ public class MySQLCommandeDAO implements CommandeDAO {
 			HashMap<Produit, LigneCommande> ligneCommande = new HashMap<Produit, LigneCommande>();
 			
 			//requete pour obtenir toute les lignes de commandes concernees par cette commande
-			PreparedStatement requeteLc = laConnexion.prepareStatement("select * from `Ligne_Commande` where id_commande=" + res.getInt(1));
+			PreparedStatement requeteLc = laConnexion.prepareStatement("select * from `Ligne_commande` where id_commande=" + res.getInt(1));
 			ResultSet resLc = requeteLc.executeQuery();
 			
 			while (resLc.next()) {

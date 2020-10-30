@@ -30,7 +30,7 @@ public class MySQLClientDAO implements ClientDAO{
 		int nbLignes = 0;
 		
 		PreparedStatement requete = laConnexion.prepareStatement("insert into `Client` (`nom`, `prenom`, `identifiant`, `mot_de_passe`, `adr_numero`, `adr_voie`, `adr_code_postal`, `adr_ville`, `adr_pays`) "
-				+ "VALUES (?, ?,'?', '?' ,? ,? ,? ,?, ?)");	
+				+ "VALUES (?, ?, ?, ?,? ,? ,? ,?, ?)");	
 		requete.setString(1, client.getNom());	
 		requete.setString(2, client.getPrenom());	
 		requete.setString(3, client.getIdentifiant());
@@ -60,10 +60,24 @@ public class MySQLClientDAO implements ClientDAO{
 		
 		PreparedStatement requete = laConnexion.prepareStatement("update `Client` set nom=?, "
 																				+ "prenom=? "
+																				+ "identifiant=? "
+																				+ " mot_de_passe=? "
+																				+ "adr_numero=? "
+																				+ "adr_voie=? "
+																				+ "adr_code_postal"
+																				+ "adr_ville=? "
+																				+ "adr_pays=? "
 																				+ "where id_client=?");
 		requete.setString(1,client.getNom());
 		requete.setString(2,client.getPrenom());
-		requete.setInt(3,client.getId());
+		requete.setString(3,client.getIdentifiant());
+		requete.setString(4,client.getMotDePasse());
+		requete.setString(5,client.getNumero());
+		requete.setString(6,client.getRue());
+		requete.setString(7,client.getCodePostal());
+		requete.setString(8,client.getVille());
+		requete.setString(9,client.getPays());
+		requete.setInt(10,client.getId());
 		
 		nbLignes = requete.executeUpdate();
 		
@@ -103,7 +117,7 @@ public class MySQLClientDAO implements ClientDAO{
 		
 		Connection laConnexion = Connexion.creeConnexion();
 		
-		PreparedStatement requete = laConnexion.prepareStatement("select id_client, nom, prenom, adr_numero, adr_voie, adr_code_postal, adr_ville, adr_pays from `Client` where id_client =" + id);
+		PreparedStatement requete = laConnexion.prepareStatement("select id_client, nom, prenom, identifiant, mot_de_passe, adr_numero, adr_voie, adr_code_postal, adr_ville, adr_pays from `Client` where id_client =" + id);
 		
 		ResultSet res = requete.executeQuery();
 		
