@@ -21,3 +21,15 @@ CATEGORIE :
 - filtrage des données disponible pour titre / visuel
 - bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
 - boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
+
+
+CLIENT : 
+- affichage des clients
+- ajout d'une client unique (pas de duplicata)
+- modification d'un client 
+- suppression d'un client possible uniquement s'il n'a passé aucune commande
+- tri des données par nom, ville
+- filtrage des clients par nom ou nom, prénom
+- bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
+- boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
+- à partir de la fiche détail du client, possibilité de voir ses commandes
