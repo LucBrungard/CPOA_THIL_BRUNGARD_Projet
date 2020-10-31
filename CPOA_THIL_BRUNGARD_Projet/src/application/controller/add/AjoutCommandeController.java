@@ -124,6 +124,7 @@ public class AjoutCommandeController implements Initializable {
 		catch (Exception e) {
 			this.lblAffichage.setTextFill(Color.RED);
 			this.lblAffichage.setText(e.getMessage());
+			System.out.println(e.getMessage());
 			
 			//si le client à déjà une commande à cette date, on l'informe donc que le produit sera ajouté a la commande existante
 			try {

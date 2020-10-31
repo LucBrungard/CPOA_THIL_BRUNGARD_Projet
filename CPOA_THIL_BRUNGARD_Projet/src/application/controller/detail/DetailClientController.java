@@ -69,6 +69,9 @@ public class DetailClientController implements Initializable {
 			//On recupere le controleur de la page PageComma,de.fxml
 			PageCommandeController controller = fxmlLoader.getController();
 			controller.getActualiser().setVisible(false);
+			controller.getRechercheCl().setVisible(false);
+			controller.getRechercheProd().setVisible(false);
+			controller.getAddCommande().setVisible(false);
 			
 			//On charge les donnees de la ligne selectionnee dans la classe controleur PageCommandeController
 			controller.initData(selectedItem); 

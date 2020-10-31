@@ -3,6 +3,7 @@ package application.controller.page;
 import java.net.URL;
 
 
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -11,8 +12,6 @@ import application.controller.MainController;
 import application.controller.add.AjoutClientController;
 import application.controller.detail.DetailClientController;
 import application.controller.edit.EditClientController;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -267,6 +266,8 @@ public class PageClientController implements Initializable {
 					}
 				}
 			}
+			tabClient.getItems().clear();
+			tabClient.getItems().addAll(listeClient);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -275,7 +276,7 @@ public class PageClientController implements Initializable {
 	
 	
 	//Renvoie une liste des clients qui possedent un prenom correspondant a la demande
-	public ArrayList<Client> filtrerPrenom() {
+	public void filtrerPrenom() {
 		String prenom = searchPrenom.getText().trim().toLowerCase();
 		ArrayList<Client> listeClient = new ArrayList<Client>();
 		try {
@@ -290,56 +291,15 @@ public class PageClientController implements Initializable {
 					}
 				}
 			}
+			
+			tabClient.getItems().clear();
+			tabClient.getItems().addAll(listeClient);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return listeClient;
 	}
 		
-
-	//renvoie la liste la plus longue
-	private ArrayList<Client> max(ArrayList<Client> l1, ArrayList<Client> l2) {
-		if (l1.size() >= l2.size())
-			return l1;
-		if (l2.size() >= l1.size())
-			return l2;
-		return l2;
-	}
-	
-	
-	//Rassemble toute les listes des donnees filtrees et fait un ET exclusif des donnees
-	public void filtrer() {
-		ArrayList<Client> prodNom = filtrerNom();
-		ArrayList<Client> prodPrenom = filtrerPrenom();
-		ObservableList<Client> listeClientSelect = FXCollections.observableArrayList();
-		
-		ObservableList<Client> listeClientSurplus = FXCollections.observableArrayList();
-		ObservableList<Client> listeClientMino = FXCollections.observableArrayList();
-		
-		for (Client client : max(prodNom, prodPrenom)) {
-			if (prodNom.contains(client) 
-					&& prodPrenom.contains(client))
-				listeClientSelect.add(client);
-		}
-		//On enleve de la tableView tout produit non present dans listeClientSelect mais present dans la tableView
-		ObservableList<Client> trans1 = tabClient.getItems();
-		
-		for (Client client : trans1) {
-			if (!listeClientSelect.contains(client))
-				listeClientSurplus.add(client);
-		}
-		
-		//On rajoute dans la tableView tout produit present dans listeClientSelect mais non present dans la tableView
-		ObservableList<Client> trans2 = tabClient.getItems();
-		for (Client produit : listeClientSelect ) {
-			if (!trans2.contains(produit))
-				listeClientMino.add(produit);
-		}
-		
-		tabClient.getItems().removeAll(listeClientSurplus);
-		tabClient.getItems().addAll(listeClientMino);
-	}
 
 	
 }

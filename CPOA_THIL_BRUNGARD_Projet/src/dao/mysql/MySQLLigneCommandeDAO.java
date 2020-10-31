@@ -87,14 +87,14 @@ public class MySQLLigneCommandeDAO implements LigneCommandeDAO<LigneCommande>{
 	
 		boolean idCom = verifIdCom(ligneCom.getIdCommande());
 		if (idCom)
-			requete.setInt(3, ligneCom.getIdCommande());
+			requete.setInt(2, ligneCom.getIdCommande());
 		else
 			throw new IllegalArgumentException("Aucune commande ne possede cet identifiant");
 		
 		
 		boolean idProd = verifIdProd(ligneCom.getIdProduit());
 		if (idProd)
-			requete.setInt(4, ligneCom.getIdProduit());
+			requete.setInt(3, ligneCom.getIdProduit());
 		else
 			throw new IllegalArgumentException("Aucun produit ne possede cet identifiant"); 
 		

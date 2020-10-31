@@ -35,7 +35,7 @@ public class MySQLCommandeDAO implements CommandeDAO {
 		int nbLignes = 0;
 
 		//Pour ne pas creer de duplicata
-		PreparedStatement verif = laConnexion.prepareStatement("SELECT date_commande, id_client FROM Commande WHERE date_commande=? + id_client=?");
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT date_commande, id_client FROM Commande WHERE date_commande=? AND id_client=?");
 		verif.setDate(1, java.sql.Date.valueOf(commande.getDate()));
 		verif.setInt(2, commande.getIdClient());
 		ResultSet ligneVerif = verif.executeQuery();

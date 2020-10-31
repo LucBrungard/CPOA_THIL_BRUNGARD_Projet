@@ -6,6 +6,7 @@ import java.net.URL;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -16,6 +17,8 @@ import application.controller.detail.DetailCommandeController;
 import application.controller.edit.EditCommandeController;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,19 +28,23 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import modele.Client;
 import modele.Commande;
 import modele.LigneCommande;
+import modele.Produit;
 
 public class PageCommandeController implements Initializable {
 	
@@ -51,6 +58,11 @@ public class PageCommandeController implements Initializable {
 	@FXML private Button editCommande;
 	@FXML private Button detailCommande;
 	@FXML Button actualiser;
+	@FXML HBox rechercheCl; 
+	@FXML HBox rechercheProd; 
+	
+	@FXML private ChoiceBox<Produit> searchProduit;
+	@FXML private TextField searchClient;
 	
 	@SuppressWarnings("unused")
 	private MainController main;
@@ -60,6 +72,13 @@ public class PageCommandeController implements Initializable {
 	public void actualiser() {
 		try {
 			this.tabCommande.getItems().setAll(MainController.commandeDAO.findAll());
+			
+			ObservableList<Produit> listeProduit = FXCollections.observableArrayList();
+			for (Produit produit : MainController.produitDAO.findAll()) {
+				listeProduit.add(produit);
+			}
+			listeProduit.add(null); 
+			this.searchProduit.setItems(listeProduit);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -81,6 +100,24 @@ public class PageCommandeController implements Initializable {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+		ObservableList<Produit> listeProduit = FXCollections.observableArrayList();
+		
+		try {
+			for (Produit produit : MainController.produitDAO.findAll()) {
+				listeProduit.add(produit);
+			}
+			listeProduit.add(null); 
+			this.searchProduit.setItems(listeProduit);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		searchProduit.getSelectionModel().selectedItemProperty().addListener(
+				(observale, odlValue, newValue) -> {
+					filtrerProduit();
+				});
+		
 		
 		this.idCommande.setCellValueFactory(new PropertyValueFactory<>("id"));
 		this.dateCommande.setCellValueFactory(new PropertyValueFactory<>("date"));
@@ -199,6 +236,9 @@ public class PageCommandeController implements Initializable {
 			nStage.initModality(Modality.APPLICATION_MODAL);
 			nStage.showAndWait();
 			
+			for(Commande commande : tabCommande.getItems()) {
+				if (!MainController.commandeDAO.findAll().contains(commande)) tabCommande.getItems().remove(commande); 
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -264,14 +304,77 @@ public class PageCommandeController implements Initializable {
 			tabCommande.getSelectionModel().clearSelection();
 		}
 	}
+	
+	//Renvoie une liste des commandes qui possedent un produit correspondant a la demande
+		public ArrayList<Commande> filtrerProduit() {
+			searchClient.setText("");
+			ArrayList<Commande> listeCommande = new ArrayList<Commande>();
+			Produit produit = searchProduit.getSelectionModel().getSelectedItem(); 
+			String nom = searchClient.getText().trim().toLowerCase();
+			try {
+				if ((produit!=null) && (nom.equals(""))) {
+				for (Commande commande : MainController.commandeDAO.findAll()) {
+					for (Map.Entry<Produit, LigneCommande> mapentry : commande.getLigneCommande().entrySet()) {
+						if (mapentry.getKey().equals(produit))
+							listeCommande.add(commande);
+					}
+				}
+				}
+				else {
+					listeCommande.addAll(MainController.commandeDAO.findAll()); 
+				}
+				
+				tabCommande.getItems().clear(); 
+				tabCommande.getItems().addAll(listeCommande);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return listeCommande; 
+		}
+		
+		
+		//Renvoie une liste des clients qui possedent un nom correspondant a la demande
+		public ArrayList<Commande> filtrerClient() {
+			searchProduit.setValue(null);
+			String nom = searchClient.getText().trim().toLowerCase();
+			ArrayList<Commande> listeCommande= new ArrayList<Commande>();
+			try {
+				if (nom.equals("")) {
+					listeCommande.addAll(MainController.commandeDAO.findAll());
+				}
+				
+				else {
+					for (Commande commande : MainController.commandeDAO.findAll()) {
+						if (MainController.clientDAO.getById(commande.getIdClient()).getNom().toLowerCase().contains(nom)) {
+							listeCommande.add(commande);
+						}
+					}
+				}
+				tabCommande.getItems().clear(); 
+				tabCommande.getItems().addAll(listeCommande);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return listeCommande;
+		}
+		
 
 	public Button getActualiser() {
 		return actualiser;
 	}
 
-	public void setActualiser(Button actualiser) {
-		this.actualiser = actualiser;
+
+	public HBox getRechercheCl() {
+		return rechercheCl;
 	}
-	
+		
+	public HBox getRechercheProd() {
+		return rechercheProd;
+	}
+
+	public Button getAddCommande() {
+		return addCommande;
+	}
 
 }

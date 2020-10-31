@@ -32,7 +32,7 @@ public class MySQLClientDAO implements ClientDAO{
 		int nbLignes = 0;
 		
 		//Pour ne pas creer de duplicata
-		PreparedStatement verif = laConnexion.prepareStatement("SELECT nom, prenom, identifiant FROM Client WHERE nom=? + prenom=? + identifiant=? ");
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT nom, prenom, identifiant FROM Client WHERE nom=? AND prenom=? AND identifiant=? ");
 		verif.setString(1, client.getNom());
 		verif.setString(2, client.getPrenom());	
 		verif.setString(3, client.getIdentifiant());

@@ -70,7 +70,7 @@
                      <children>
                         <HBox minWidth="150.0" prefHeight="25.0" spacing="10.0">
                            <children>
-                              <TextField fx:id="searchNom" minWidth="115.0" onKeyReleased="#filtrer" prefHeight="25.0" prefWidth="100.0" />
+                              <TextField fx:id="searchNom" minWidth="115.0" onKeyReleased="#filtrerNom" prefHeight="25.0" prefWidth="100.0" />
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../image/chercher.png" />
@@ -83,7 +83,7 @@
                         </HBox>
                         <HBox minWidth="150.0" prefHeight="25.0" spacing="10.0">
                            <children>
-                              <TextField fx:id="searchPrenom" minWidth="115.0" onKeyReleased="#filtrer" prefHeight="25.0" prefWidth="100.0" />
+                              <TextField fx:id="searchPrenom" minWidth="115.0" onKeyReleased="#filtrerPrenom" prefHeight="25.0" prefWidth="100.0" />
                               <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../image/chercher.png" />

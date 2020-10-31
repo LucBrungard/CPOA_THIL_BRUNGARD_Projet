@@ -185,6 +185,20 @@ public class DetailCommandeController implements Initializable {
 				MainController.commandeDAO.update(c); 
 				MainController.ligneCommandeDAO.delete(selectedItem);
 				tabLigneCommande.getItems().remove(selectedItem);
+				
+				if(c.getLigneCommande().isEmpty()) {
+					alert.setTitle("Alerte suppression");
+					alert.setContentText("Cette commande est maintenant vide voulez-vous la supprimer");
+					Optional<ButtonType> result1 = alert.showAndWait();
+					if (result1.get() == ButtonType.OK){
+						MainController.commandeDAO.delete(c); 
+						Stage stage = (Stage) tabLigneCommande.getScene().getWindow();
+						stage.close(); 
+						
+					}
+					}
+				
+			
 				tabLigneCommande.getSelectionModel().clearSelection();
 				
 				//On charge l'url de la page PageProduit.fxml pour actualiser les quantite
