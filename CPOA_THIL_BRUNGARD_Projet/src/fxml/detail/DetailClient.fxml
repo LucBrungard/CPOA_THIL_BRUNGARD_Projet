@@ -57,7 +57,7 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <Label fx:id="lblIdentifiant" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label fx:id="lblIdentifiant" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
                   <Label text="Mot de passe :" GridPane.rowIndex="2">
                      <padding>
                         <Insets right="10.0" />
