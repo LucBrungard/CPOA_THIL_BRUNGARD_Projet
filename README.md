@@ -33,3 +33,23 @@ CLIENT :
 - bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
 - boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
 - à partir de la fiche détail du client, possibilité de voir ses commandes
+
+COMMANDE : 
+- affichage des commandes
+- ajout d'une commande unique (pas de duplicata : une seule commande par client et par jour)
+- si commande déjà existante, on propose d'ajouter directement dans celle-ci
+- modification d'une commande
+- suppression d'une commande après une demande de confirmation
+- bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
+- boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
+- à partir de la fiche détail de la commande, visualisation des lignes de commandes
+
+ LIGNE COMMANDE : 
+- à partir de la fiche détail de la commande, affichage des lignes de commandes
+- ajout d'une ligne de commande unique (pas de duplicata)
+- si ligne de commande déjà existante, on indique à l'utilisateur de passer par l'option modifier
+- modification d'une ligne de commande
+- suppression d'une ligne de commande après une demande de confirmation
+- bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
+- boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
+
