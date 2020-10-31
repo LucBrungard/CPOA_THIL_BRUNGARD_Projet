@@ -1,9 +1,11 @@
 package dao.mysql;
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import connexion.Connexion;
@@ -29,64 +31,91 @@ public class MySQLClientDAO implements ClientDAO{
 		
 		int nbLignes = 0;
 		
-		PreparedStatement requete = laConnexion.prepareStatement("insert into `Client` (`nom`, `prenom`, `identifiant`, `mot_de_passe`, `adr_numero`, `adr_voie`, `adr_code_postal`, `adr_ville`, `adr_pays`) "
-				+ "VALUES (?, ?, ?, ?,? ,? ,? ,?, ?)");	
-		requete.setString(1, client.getNom());	
-		requete.setString(2, client.getPrenom());	
-		requete.setString(3, client.getIdentifiant());
-		requete.setString(4, client.getMotDePasse());
-		requete.setString(5, client.getNumero());	
-		requete.setString(6, client.getRue());	
-		requete.setString(7, client.getCodePostal());	
-		requete.setString(8, client.getVille());	
-		requete.setString(9, client.getPays());		
+		//Pour ne pas creer de duplicata
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT nom, prenom, identifiant FROM Client WHERE nom=? + prenom=? + identifiant=? ");
+		verif.setString(1, client.getNom());
+		verif.setString(2, client.getPrenom());	
+		verif.setString(3, client.getIdentifiant());
+		ResultSet ligneVerif = verif.executeQuery();
 		
-		nbLignes = requete.executeUpdate(); 
-		
-		if (nbLignes == 0)
-			throw new IllegalArgumentException("\nEchec lors de la creation du client");
+		if (ligneVerif.next()) 
+			throw new IllegalArgumentException("Ce client existe deja !");
+		else {
+			PreparedStatement requete = laConnexion.prepareStatement("insert into `Client` (`nom`, `prenom`, `identifiant`, `mot_de_passe`, `adr_numero`, `adr_voie`, `adr_code_postal`, `adr_ville`, `adr_pays`) " 
+					+ "VALUES (?, ?, ?, ?,? ,? ,? ,?, ?)", Statement.RETURN_GENERATED_KEYS);	
+			requete.setString(1, client.getNom());	
+			requete.setString(2, client.getPrenom());	
+			requete.setString(3, client.getIdentifiant());
+			requete.setString(4, client.getMotDePasse());
+			requete.setString(5, client.getNumero());	
+			requete.setString(6, client.getRue());	
+			requete.setString(7, client.getCodePostal());	
+			requete.setString(8, client.getVille());	
+			requete.setString(9, client.getPays());
+			
+			nbLignes = requete.executeUpdate();
+			
+			if (nbLignes == 0)
+				throw new IllegalArgumentException("\nEchec de la creation");
+			
+			try (ResultSet generatedKeys = requete.getGeneratedKeys()) {
+				if (generatedKeys.next()) 
+					client.setId(generatedKeys.getInt(1));
+			}
+		}
 		
 		if (laConnexion != null)
 			laConnexion.close();
-			
+		
 		return nbLignes==1;
 	}
 
 	@Override
 	public boolean update(Client client) throws SQLException{
+		
 		Connection laConnexion = Connexion.creeConnexion();
 		
 		int nbLignes = 0;
 		
-		PreparedStatement requete = laConnexion.prepareStatement("update `Client` set nom=?, "
-																				+ "prenom=? "
-																				+ "identifiant=? "
-																				+ " mot_de_passe=? "
-																				+ "adr_numero=? "
-																				+ "adr_voie=? "
-																				+ "adr_code_postal"
-																				+ "adr_ville=? "
-																				+ "adr_pays=? "
-																				+ "where id_client=?");
-		requete.setString(1,client.getNom());
-		requete.setString(2,client.getPrenom());
-		requete.setString(3,client.getIdentifiant());
-		requete.setString(4,client.getMotDePasse());
-		requete.setString(5,client.getNumero());
-		requete.setString(6,client.getRue());
-		requete.setString(7,client.getCodePostal());
-		requete.setString(8,client.getVille());
-		requete.setString(9,client.getPays());
-		requete.setInt(10,client.getId());
-		
-		nbLignes = requete.executeUpdate();
-		
-		if (nbLignes == 0)
-			throw new IllegalArgumentException("\nTentative de modification d'un client inexistant");
+		//Pour ne pas creer de duplicata
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT nom, prenom, identifiant FROM Client WHERE id_client=?");
+		verif.setInt(1, client.getId());
+		ResultSet ligneVerif = verif.executeQuery();
+
+		if (ligneVerif.next()) {
+			//Si le titre de la categorie a change on regarde s'il existe deja
+			if (( !client.getNom().equals(ligneVerif.getString(1))) && ( !client.getPrenom().equals(ligneVerif.getString(2))) && ( !client.getIdentifiant().equals(ligneVerif.getString(3)))  ) {
+				PreparedStatement existe = laConnexion.prepareStatement("SELECT nom, prenom, identifiant FROM Client WHERE nom=? + prenom=? + identifiant=?");
+				existe.setString(1, client.getNom());
+				existe.setString(2, client.getPrenom());	
+				existe.setString(3, client.getIdentifiant());
+				ResultSet existeLigne = existe.executeQuery();
+				
+				if (existeLigne.next()) 
+					throw new IllegalArgumentException("Ce client existe deja !");
+			}
+			
+			PreparedStatement requete = laConnexion.prepareStatement("update `Client` set nom=?, prenom=?, identifiant=?, mot_de_passe=?, adr_numero=?, adr_voie=?, adr_code_postal=?, adr_ville=?, adr_pays=? where id_client=?");
+			requete.setString(1,client.getNom());
+			requete.setString(2,client.getPrenom());
+			requete.setString(3,client.getIdentifiant());
+			requete.setString(4,client.getMotDePasse());
+			requete.setString(5,client.getNumero());
+			requete.setString(6,client.getRue());
+			requete.setString(7,client.getCodePostal());
+			requete.setString(8,client.getVille());
+			requete.setString(9,client.getPays());
+			requete.setInt(10,client.getId());
+			
+			nbLignes = requete.executeUpdate();
+			
+			if (nbLignes == 0)
+				throw new IllegalArgumentException("\nTentative de modification d'un client inexistant");
+		}
 		
 		if (laConnexion != null)
 			laConnexion.close();
-		
+	
 		return nbLignes==1;
 	}
 

@@ -31,45 +31,52 @@ public class MySQLCommandeDAO implements CommandeDAO {
 	@Override
 	public boolean create(Commande commande) throws SQLException{
 		Connection laConnexion = Connexion.creeConnexion();
-		
+
 		int nbLignes = 0;
-		
-		PreparedStatement requete = laConnexion.prepareStatement("insert into `Commande` (`date_commande`, `id_client`) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
-					
-		requete.setDate(1, java.sql.Date.valueOf(commande.getDate()));
-		requete.setInt(2, commande.getIdClient());
-		
-		//Verification de l'id client rentre
-		PreparedStatement verifIdClient = laConnexion.prepareStatement("select id_client from `Client`");
-		ResultSet resIdClient = verifIdClient.executeQuery();		
-		
-		boolean existId = false;
-		while (resIdClient.next()) {
-			if (commande.getIdClient() == resIdClient.getInt(1))
-				existId = true;
+
+		//Pour ne pas creer de duplicata
+		PreparedStatement verif = laConnexion.prepareStatement("SELECT date_commande, id_client FROM Commande WHERE date_commande=? + id_client=?");
+		verif.setDate(1, java.sql.Date.valueOf(commande.getDate()));
+		verif.setInt(2, commande.getIdClient());
+		ResultSet ligneVerif = verif.executeQuery();
+
+		if (ligneVerif.next()) 
+			throw new IllegalArgumentException("Cette commande existe deja !");
+		else {
+			PreparedStatement requete = laConnexion.prepareStatement("insert into `Commande` (`date_commande`, `id_client`) values (?, ?);", Statement.RETURN_GENERATED_KEYS);
+
+			requete.setDate(1, java.sql.Date.valueOf(commande.getDate()));
+
+			//Verification de l'id client rentre
+			PreparedStatement verifIdClient = laConnexion.prepareStatement("select id_client from `Client`");
+			ResultSet resIdClient = verifIdClient.executeQuery();		
+
+			boolean existId = false;
+			while (resIdClient.next()) {
+				if (commande.getIdClient() == resIdClient.getInt(1))
+					existId = true;
+			}
+
+			if (existId)
+				requete.setInt(2, commande.getIdClient());
+			else 
+				throw new IllegalArgumentException("\nIdentifiant de client inexistant");
+
+
+			nbLignes = requete.executeUpdate();
+
+			if (nbLignes == 0)
+				throw new IllegalArgumentException("\nErreur de la creation de la commande");
+
+			try (ResultSet generatedKeys = requete.getGeneratedKeys()) {
+				if (generatedKeys.next()) 
+					commande.setId(generatedKeys.getInt(1));
+			}
 		}
-		
-		if (existId)
-			requete.setInt(2, commande.getIdClient());
-		else 
-			throw new IllegalArgumentException("\nIdentifiant de client inexistant");
-		
-		
-		
-		
-		nbLignes = requete.executeUpdate();
-		
-		if (nbLignes == 0)
-			throw new IllegalArgumentException("\nErreur de la creation de la commande");
-		
-		try (ResultSet generatedKeys = requete.getGeneratedKeys()) {
-            if (generatedKeys.next()) 
-                commande.setId(generatedKeys.getInt(1));
-        }
-		
+
 		if (laConnexion != null)
 			laConnexion.close();
-			
+
 		return nbLignes==1;
 	}
 

@@ -27,6 +27,7 @@ public class MySQLLigneCommandeDAO implements LigneCommandeDAO<LigneCommande>{
 	@Override
 	public boolean create(LigneCommande ligneCom) throws SQLException {
 		Connection laConnexion = Connexion.creeConnexion();
+		boolean existe = false; 
 		
 		int nbLignes = 0;
 		
@@ -38,9 +39,11 @@ public class MySQLLigneCommandeDAO implements LigneCommandeDAO<LigneCommande>{
 			LigneCommande lcCompare = new LigneCommande(getAllres.getInt(1), getAllres.getInt(2), getAllres.getInt(3), getAllres.getFloat(4));
 			
 			if (lcRajout.equals(lcCompare)) 
-				return false;
+				existe=true;
 		}
 		
+		if(existe) throw new IllegalArgumentException("Ligne commande déjà existante"); 
+		else {
 		PreparedStatement requete = laConnexion.prepareStatement("insert into `Ligne_commande` (`id_commande`, `id_produit`, `quantite`, `tarif_unitaire`) values (?, ?, ?, ?)");
 		
 		boolean idCom = verifIdCom(ligneCom.getIdCommande());
@@ -61,6 +64,7 @@ public class MySQLLigneCommandeDAO implements LigneCommandeDAO<LigneCommande>{
 		requete.setFloat(4, ligneCom.getPrixUnitaire());
 		
 		nbLignes = requete.executeUpdate();
+		}
 		
 		if (nbLignes == 0)
 			throw new IllegalArgumentException("Erreur lors de la creation de la ligne de commande"); 
@@ -77,11 +81,10 @@ public class MySQLLigneCommandeDAO implements LigneCommandeDAO<LigneCommande>{
 		
 		int nbLignes =0;
 		
-		PreparedStatement requete = laConnexion.prepareStatement("update `Ligne_commande` set quantite=?, tarif_unitaire=? where id_commande=? and id_produit=? ");
+		PreparedStatement requete = laConnexion.prepareStatement("update `Ligne_commande` set quantite=? where id_commande=? and id_produit=? ");
 		
 		requete.setInt(1, ligneCom.getQuantite());
-		requete.setFloat(2, ligneCom.getPrixUnitaire());
-		
+	
 		boolean idCom = verifIdCom(ligneCom.getIdCommande());
 		if (idCom)
 			requete.setInt(3, ligneCom.getIdCommande());
