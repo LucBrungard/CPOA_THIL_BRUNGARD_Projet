@@ -64,7 +64,7 @@ public class EditCommandeController implements Initializable{
 	@FXML
 	public void modifCommande() {
 		
-		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
+		//Objet de type Client qui correspond a l'objet selectionne dans le choice box
 		Client selectClient = cbxClient.getSelectionModel().getSelectedItem(); 
 		int idClient = 0;
 		
@@ -74,13 +74,13 @@ public class EditCommandeController implements Initializable{
 		
 		
 		try {
-			//On creer dans la DAO l'objet Produit
+			//On creer dans la DAO l'objet Commande
 			Commande commande = new Commande(selectedItem.getId(), editDate.getValue(), idClient, selectedItem.getLigneCommande()); 
 			MainController.commandeDAO.update(commande); 
 			
 			this.selectedItem = commande;
 			
-			//On r�cup�re la scene sur laquelle le btnModif est place et on ferme cette fenetre
+			//On recupere la scene sur laquelle le btnModif est place et on ferme cette fenetre
 			Stage stage = (Stage) btnModif.getScene().getWindow();
 			stage.close();
 		}

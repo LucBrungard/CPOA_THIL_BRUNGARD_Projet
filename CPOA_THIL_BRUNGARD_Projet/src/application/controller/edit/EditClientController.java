@@ -68,6 +68,7 @@ public class EditClientController implements Initializable {
 		int cp = 0;
 		int num = 0; 
 		
+		//on essaye de convertir le code postal et le numéro en entier
 		try {
 			cp = Integer.parseInt(codePostal); 
 			num = Integer.parseInt(numero); 
@@ -81,7 +82,7 @@ public class EditClientController implements Initializable {
 			this.lblAffichage.setTextFill(Color.RED);
 			
 			if (cp>0 && num>0) {
-			//On creer dans la DAO l'objet Produit
+			//On creer dans la DAO l'objet Client si le cp et le numéro sont supérieurs à 0
 			Client client = new Client(selectedItem.getId(), nom, prenom, identifiant, mdp, numero, rue, codePostal, ville, pays);
 			MainController.clientDAO.update(client);
 			

@@ -119,19 +119,19 @@ public class PageClientController implements Initializable {
 		initData(); 
 	}
 	
-	//Charge la page AJoutProduit et recupere les donnees pour les ajouter dans le tableau
+	//Charge la page AJoutClient et recupere les donnees pour les ajouter dans le tableau
 	public void ajoutClient() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page AjoutProduit.fxml
+			//On charge l'url de la page AjoutClient.fxml
 			URL fxmlURL=getClass().getResource("/fxml/add/AjoutClient.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxml
+			//On recupere le controleur de la page AjoutClient.fxml
 			AjoutClientController controller = fxmlLoader.getController();
 			
-			//On affiche la fenetre AjoutProduit
+			//On affiche la fenetre AjoutClient
 			Scene scene = new Scene((AnchorPane) root, 600, 400);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
@@ -139,6 +139,7 @@ public class PageClientController implements Initializable {
 			nStage.initModality(Modality.APPLICATION_MODAL);
 			nStage.showAndWait();
 			
+			//on ajoute le client crée dans le tableau
 			if (controller.getClientAjout() != null)
 				tabClient.getItems().add(controller.getClientAjout());
 		}
@@ -148,22 +149,22 @@ public class PageClientController implements Initializable {
 	}
 
 	
-	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	//Charge la page ModifClient et recupere les donnees pour les modifier dans le tableau
 	public void modifClient() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page ModifCateg.fxml
+			//On charge l'url de la page ModifClient.fxml
 			URL fxmlURL=getClass().getResource("/fxml/edit/ModifClient.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxml
+			//On recupere le controleur de la page ModifClient.fxml
 			EditClientController controller = fxmlLoader.getController();
 			
-			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditClientController
 			controller.initData(tabClient.getSelectionModel().getSelectedItem());
 			
-			//On affiche la fenetre ModifCateg
+			//On affiche la fenetre ModifClient
 			Scene scene = new Scene((AnchorPane) root, 600, 400);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
@@ -181,19 +182,19 @@ public class PageClientController implements Initializable {
 		}
 	}
 	
-	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	//Charge la page DetailClient qui permet de voir les informations non contenues dans le tableau
 	public void detailClient() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page ModifCateg.fxml
+			//On charge l'url de la page DetailClient.fxml
 			URL fxmlURL=getClass().getResource("/fxml/detail/DetailClient.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxml
+			//On recupere le controleur de la page DetailClient.fxml
 			DetailClientController controller = fxmlLoader.getController();
 			
-			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			//On charge les donnees de la ligne selectionnee dans la classe controleur DetailClientController
 			controller.initData(tabClient.getSelectionModel().getSelectedItem());
 			
 			//On affiche la fenetre ModifCateg
@@ -215,24 +216,27 @@ public class PageClientController implements Initializable {
 	//Supprime la valeur dans le tableau et dans la dao
 	public void supprClient() {
 		boolean utilise=false; 
-		//Ouvre une fenetre d'alerte pour confirer la suppresion
+		//Ouvre une fenetre d'alerte pour confirmer la suppresion
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
 		alert.setContentText("Etes vous certain de vouloir supprimer ce client ?");
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
+				//on verifie si le client a passé des commandes
 				for (Commande c : MainController.commandeDAO.findAll()) {
 					if (c.getIdClient() == tabClient.getSelectionModel().getSelectedItem().getId())
 						utilise = true;
 				}
 				
+				//si c'est le cas, on indique qu'il est impossible de supprimer ce client
 				if (utilise) {
 					Alert nonSuppr = new Alert(AlertType.WARNING);
 					nonSuppr.setTitle("Impossibilite de suppression");
 					nonSuppr.setContentText("Vous ne pouvez pas supprimer ce client car il est utilise dans au moins une commande");
 					nonSuppr.showAndWait();
 				} 
+				//sinon on le supprime
 				else {
 					MainController.clientDAO.delete(client); 
 					tabClient.getItems().remove(client);
@@ -248,7 +252,7 @@ public class PageClientController implements Initializable {
 	}
 	
 	
-	//Renvoie une liste des produits qui possedent un nom correspondant a la demande
+	//Renvoie une liste des clients qui possedent un nom correspondant a la demande
 	public ArrayList<Client> filtrerNom() {
 		String nom = searchNom.getText().trim().toLowerCase();
 		ArrayList<Client> listeClient = new ArrayList<Client>();
@@ -270,7 +274,7 @@ public class PageClientController implements Initializable {
 	}
 	
 	
-	//Renvoie une liste des produits qui possedent un titre de categorie correspondant a la demande
+	//Renvoie une liste des clients qui possedent un prenom correspondant a la demande
 	public ArrayList<Client> filtrerPrenom() {
 		String prenom = searchPrenom.getText().trim().toLowerCase();
 		ArrayList<Client> listeClient = new ArrayList<Client>();
@@ -279,6 +283,7 @@ public class PageClientController implements Initializable {
 				listeClient.addAll(filtrerNom());
 			}
 			else {
+				//si dans la liste contenant le nom demandé, il y a egalement le prenom demandé, alors on ajoute ce clietnt à ListeCLient
 				for (Client client : filtrerNom()) {
 					if (client.getPrenom().toLowerCase().contains(prenom)) {
 						listeClient.add(client);
@@ -292,6 +297,7 @@ public class PageClientController implements Initializable {
 		return listeClient;
 	}
 		
+
 	//renvoie la liste la plus longue
 	private ArrayList<Client> max(ArrayList<Client> l1, ArrayList<Client> l2) {
 		if (l1.size() >= l2.size())
@@ -316,7 +322,7 @@ public class PageClientController implements Initializable {
 					&& prodPrenom.contains(client))
 				listeClientSelect.add(client);
 		}
-		//On enleve de la tableView tout produit non present dans listeProdSelect mais present dans la tableView
+		//On enleve de la tableView tout produit non present dans listeClientSelect mais present dans la tableView
 		ObservableList<Client> trans1 = tabClient.getItems();
 		
 		for (Client client : trans1) {
@@ -324,7 +330,7 @@ public class PageClientController implements Initializable {
 				listeClientSurplus.add(client);
 		}
 		
-		//On rajoute dans la tableView tout produit present dans listeProdSelect mais non present dans la tableView
+		//On rajoute dans la tableView tout produit present dans listeClientSelect mais non present dans la tableView
 		ObservableList<Client> trans2 = tabClient.getItems();
 		for (Client produit : listeClientSelect ) {
 			if (!trans2.contains(produit))
@@ -335,11 +341,5 @@ public class PageClientController implements Initializable {
 		tabClient.getItems().addAll(listeClientMino);
 	}
 
-	public TableView<Client> getTabClient() {
-		return tabClient;
-	}
-
-	public void setTabClient(TableView<Client> tabClient) {
-		this.tabClient = tabClient;
-	}
+	
 }

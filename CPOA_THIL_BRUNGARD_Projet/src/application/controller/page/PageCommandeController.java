@@ -4,6 +4,7 @@ import java.net.URL;
 
 
 
+
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
@@ -13,8 +14,6 @@ import application.controller.MainController;
 import application.controller.add.AjoutCommandeController;
 import application.controller.detail.DetailCommandeController;
 import application.controller.edit.EditCommandeController;
-import dao.Persistance;
-import dao.factory.DAOFactory;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -147,19 +146,19 @@ public class PageCommandeController implements Initializable {
 		
 	}
 	
-	//Charge la page AJoutProduit et recupere les donnees pour les ajouter dans le tableau
+	//Charge la page AJoutCommande et recupere les donnees pour les ajouter dans le tableau
 	public void ajoutCommande() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page AjoutProduit.fxml
+			//On charge l'url de la page AjoutCommande.fxml
 			URL fxmlURL=getClass().getResource("/fxml/add/AjoutCommande.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxProduitml
+			//On recupere le controleur de la page AjoutCommande.fxml
 			AjoutCommandeController controller = fxmlLoader.getController();
 			
-			//On affiche la fenetre AjoutProduit
+			//On affiche la fenetre AjoutCommande
 			Scene scene = new Scene((AnchorPane) root, 600, 350);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
@@ -176,24 +175,24 @@ public class PageCommandeController implements Initializable {
 		 
 	}
 	
-	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	//Charge la page DetailCommmande qui affiche les lignes de commande d'une commande
 	public void detailCommande() {
 	
 		Stage nStage = new Stage(); 
 		try {
-			//On charge l'url de la page ModifCateg.fxml
+			//On charge l'url de la page DztailCommande.fxml
 			URL fxmlURL=getClass().getResource("/fxml/detail/DetailCommande.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxml
+			//On recupere le controleur de la page DetailCommande.fxml
 			DetailCommandeController controller = fxmlLoader.getController();
 			
-			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			//On charge les donnees de la ligne selectionnee dans la classe controleur DetailCommandeController
 			controller.initData(tabCommande.getSelectionModel().getSelectedItem().getId());
 			
-			//On affiche la fenetre ModifCateg
-			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			//On affiche la fenetre DetailCommande
+			Scene scene = new Scene((AnchorPane) root, 600, 400);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Detail d'une commande");
@@ -206,23 +205,23 @@ public class PageCommandeController implements Initializable {
 		}
 	}
 	
-	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	//Charge la page ModifCommande et recupere les donnees pour les modifier dans le tableau
 	public void modifCommande() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page ModifCateg.fxml
+			//On charge l'url de la page ModifCommande.fxml
 			URL fxmlURL=getClass().getResource("/fxml/edit/ModifCommande.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxml
+			//On recupere le controleur de la page ModifCommande.fxml
 			EditCommandeController controller = fxmlLoader.getController();
 			
-			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCommandeController
 			controller.initData(tabCommande.getSelectionModel().getSelectedItem());
 			
-			//On affiche la fenetre ModifCateg
-			Scene scene = new Scene((AnchorPane) root, 600, 350);
+			//On affiche la fenetre ModifCommande
+			Scene scene = new Scene((AnchorPane) root, 600, 400);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Modififer une commande");
@@ -243,7 +242,7 @@ public class PageCommandeController implements Initializable {
 	//Supprime la valeur dans le tableau et dans la dao
 	@SuppressWarnings("rawtypes")
 	public void supprCommande() {
-		//Ouvre une fenetre d'alerte pour confirer la suppresion
+		//Ouvre une fenetre d'alerte pour confirmer la suppression
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
 		alert.setContentText("Etes vouloir supprimer cette commande qui est composée d'un ou plusieurs produits ?");
@@ -251,7 +250,7 @@ public class PageCommandeController implements Initializable {
 		if (result.get() == ButtonType.OK){
 			try {
 				for (Map.Entry mapentry : commande.getLigneCommande().entrySet()) {
-					DAOFactory.getDAOFactory(Persistance.LISTE_MEMOIRE).getLigneCommandeDAO().delete((LigneCommande) mapentry.getValue());
+					MainController.ligneCommandeDAO.delete((LigneCommande) mapentry.getValue());
 		        }
 				MainController.commandeDAO.delete(commande);
 				tabCommande.getItems().remove(commande);

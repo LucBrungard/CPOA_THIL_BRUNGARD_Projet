@@ -113,6 +113,7 @@ public class DetailCommandeController implements Initializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		//grace à lid de la commande, on ajoute seulement au tables les lignesCommande de la commande concernée 
 		Iterator iterator = commande.getLigneCommande().entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry mapEntry = (Map.Entry) iterator.next();
@@ -125,18 +126,18 @@ public class DetailCommandeController implements Initializable {
 	public void ajoutLigneCommande() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page AjoutProduit.fxml
+			//On charge l'url de la page AjoutLigneCommande.fxml
 			URL fxmlURL=getClass().getResource("/fxml/add/AjoutLigneCommande.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxtml
+			//On recupere le controleur de la page AjoutLigneCommande.fxml
 			AjoutLigneCommandeController controller = fxmlLoader.getController();
 			
-			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			//On charge les donnees de la ligne selectionnee dans la classe controleur AjoutLigneCommandeController
 			controller.initData(commande);
 			
-			//On affiche la fenetre AjoutProduit
+			//On affiche la fenetre AjoutLigneCommande
 			Scene scene = new Scene((AnchorPane) root, 600, 350);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
@@ -147,7 +148,7 @@ public class DetailCommandeController implements Initializable {
 			if (controller.getLigneCommandeAjout() != null)
 				tabLigneCommande.getItems().add(controller.getLigneCommandeAjout());
 			
-			//On charge l'url de la page PageProduit.fxml pour actualiser les quantite
+			//On charge l'url de la page AjoutLigneCommande.fxml pour actualiser les quantites
 			URL fxmlURL2=getClass().getResource("/fxml/page/PageProduit.fxml");
 			FXMLLoader fxmlLoader2 = new FXMLLoader(fxmlURL2);
 			fxmlLoader2.load();
@@ -164,22 +165,22 @@ public class DetailCommandeController implements Initializable {
 	
 	//Supprime la valeur dans le tableau et dans la dao
 	public void supprLigneCommande() {
-		//Ouvre une fenetre d'alerte pour confirer la suppresion
+		//Ouvre une fenetre d'alerte pour confirMer la suppression
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Alerte suppression");
 		alert.setContentText("Etes vouloir supprimer cette ligne de commande");
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
 			try {
+				//on supprime la ligne commande et on met à jour la commande
 				selectedItem = tabLigneCommande.getSelectionModel().getSelectedItem(); 
 				HashMap<Produit, LigneCommande> newLigneCommande = commande.getLigneCommande(); 
 				Iterator<Entry<Produit, LigneCommande>> iterator = newLigneCommande.entrySet().iterator();
 				while (iterator.hasNext()) {
-					@SuppressWarnings("rawtypes")
-					Map.Entry mapEntry = (Map.Entry) iterator.next();
-					if ((LigneCommande) mapEntry.getValue() == selectedItem) iterator.remove();
-					
+					Map.Entry<Produit, LigneCommande> mapEntry = (Map.Entry<Produit, LigneCommande>) iterator.next();
+					if ((LigneCommande) mapEntry.getValue() == selectedItem) iterator.remove();	
 				}
+				
 				Commande c = new Commande(commande.getId(), commande.getDate(), commande.getIdClient(), newLigneCommande);
 				MainController.commandeDAO.update(c); 
 				MainController.ligneCommandeDAO.delete(selectedItem);
@@ -204,19 +205,19 @@ public class DetailCommandeController implements Initializable {
 		}
 	}
 	
-	//Charge la page ModifProduit et recupere les donnees pour les modifier dans le tableau
+	//Charge la page ModifLigneCOmmande et recupere les donnees pour les modifier dans le tableau
 	public void modifLigneCommande() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page ModifCateg.fxml
+			//On charge l'url de la page ModifLigneCOmmande.fxml
 			URL fxmlURL=getClass().getResource("/fxml/edit/ModifLigneCommande.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On recupere le controleur de la page ModifCateg.fxml
+			//On recupere le controleur de la page ModifLigneCommande.fxml
 			EditLigneCommandeController controller = fxmlLoader.getController();
 			
-			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
+			//On charge les donnees de la ligne selectionnee dans la classe controleur EditLigneCOmmandeController
 			controller.initData(tabLigneCommande.getSelectionModel().getSelectedItem(), commande);
 			
 			//On affiche la fenetre ModifCateg

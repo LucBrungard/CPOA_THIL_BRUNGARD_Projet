@@ -71,22 +71,21 @@ public class AjoutCommandeController implements Initializable {
 		
 		int quantite = 0;
 		
-		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
+		//Objet de type Client qui correspond a l'objet selectionne dans le choice box
 		Client selectClient = cbxClient.getSelectionModel().getSelectedItem(); 
 		int idClient = 0;
-		
-		Produit selectProduit = cbxProduit.getSelectionModel().getSelectedItem(); 
-		int idProduit = 0;
-		
 		if (selectClient != null) {
 			idClient = selectClient.getId();
 		}
 		
+		//Objet de type Produit qui correspond a l'objet selectionne dans le choice box
+		Produit selectProduit = cbxProduit.getSelectionModel().getSelectedItem(); 
+		int idProduit = 0;
 		if (selectProduit != null) {
 			idProduit = selectProduit.getId();
 		}
 		
-		//on convertit le tarif qui est en String en int 
+		//on convertit la quantite qui est en String en int 
 		try {
 			quantite = Integer.parseInt(editQuantite.getText().trim());
 		}
@@ -94,12 +93,13 @@ public class AjoutCommandeController implements Initializable {
 			this.lblAffichage.setText(e.getMessage());
 		}
 		
-		//On creer le produit. Si erreur, elle sera affichee dans le label a cet effet
-		//On enregistre l'instance de produit que l'on vient de creer pour la recuperer sur la page PageProduitController
+		//On cree la commande. Si erreur, elle sera affichee dans le label a cet effet
+		//On enregistre l'instance de commande que l'on vient de creer pour la recuperer sur la page PageCommandeController
 		try {
+			//on vérifie que la date a ete entree 
 			if (editDate.getValue()!=null) {
 				
-				//On creer dans la DAO l'objet Produit
+				//On creer dans la DAO l'objet Commande avec une ligne commande
 				
 				HashMap<Produit, LigneCommande> ligneCommande = new HashMap<Produit, LigneCommande>(); 
 				Commande commande = new Commande(1, editDate.getValue(), idClient, ligneCommande);
@@ -122,8 +122,10 @@ public class AjoutCommandeController implements Initializable {
 			
 		}
 		catch (Exception e) {
+			System.out.println(e.getMessage());
 			this.lblAffichage.setTextFill(Color.RED);
 			this.lblAffichage.setText(e.getMessage());
+			//le client à déjà une commande à cette date, on l'informe donc que le produit sera ajouté a la commande existante
 			Alert alert = new Alert(AlertType.CONFIRMATION);
 			alert.setTitle("Alerte doublon");
 			alert.setContentText("Ce client a déjà une commande à cette date, si vous cliquez sur OK, le produit sera ajouté à la commande déjà existante");

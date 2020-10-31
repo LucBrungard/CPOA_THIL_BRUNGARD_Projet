@@ -49,17 +49,19 @@ public class EditLigneCommandeController implements Initializable {
 		try {
 			quantite = Integer.parseInt(editQuantite.getText().trim()); 
 		
-			//On creer dans la DAO l'objet Produit
+			//On creer dans la DAO l'objet Ligne Commande
 				
 			HashMap <Produit, LigneCommande> lc = selectedCommande.getLigneCommande(); 
 			LigneCommande ligneCommande = new LigneCommande(selectedItem.getIdCommande(), selectedItem.getIdProduit(), quantite, selectedItem.getPrixUnitaire()); 
 			
+			//on parcourt la hashmap et on met l'élément à jour
 			for (Map.Entry<Produit,LigneCommande> m : lc.entrySet()) {
 				if(m.getValue()==selectedItem) lc.replace((Produit) m.getKey(), ligneCommande); 
 	        }
  			
 			MainController.ligneCommandeDAO.update(ligneCommande); 
 			
+			//on met la commande à jour
 			Commande commande = new Commande(selectedCommande.getId(), selectedCommande.getDate(), selectedCommande.getIdClient(), lc); 
 			MainController.commandeDAO.update(commande);
 			

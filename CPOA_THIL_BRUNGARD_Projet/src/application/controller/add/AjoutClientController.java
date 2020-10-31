@@ -64,6 +64,7 @@ public class AjoutClientController implements Initializable {
 		int cp = 0;
 		int num = 0; 
 		
+		//on essaye de convertir en entier le numéro et le code postal
 		try {
 			cp = Integer.parseInt(codePostal); 
 			num = Integer.parseInt(numero); 
@@ -72,10 +73,11 @@ public class AjoutClientController implements Initializable {
 			this.lblAffichage.setText(e.getMessage());
 		}
 		
-		//on creer une instance de produit 
+		//on creer une instance de client
 		this.lblAffichage.setTextFill(Color.web("#000000"));
 			
 			try {
+				//si le code postal et le numéro est supérieur à 0 on crée le client
 				if (cp>0 && num>0) {
 				Client client = new Client(1, nom, prenom, identifiant, mdp, numero, rue, codePostal, ville, pays);
 				MainController.clientDAO.create(client); 

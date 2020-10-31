@@ -66,15 +66,6 @@ public class ListeMemoireClientDAO implements ClientDAO {
 	@Override
 	public boolean update(Client client) throws IllegalArgumentException {
 		
-		// Ne fonctionne que si l'objet metier est bien fait...
-		/*int idx = this.donnees.indexOf(objet);
-		if (idx == -1) {
-			throw new IllegalArgumentException("Tentative de modification d'un client inexistant");
-		} else {
-			this.donnees.set(idx, objet);
-		}
-		
-		return true;*/
 		
 		int idx = donnees.indexOf(client);
 		if (idx == -1) {
@@ -83,7 +74,7 @@ public class ListeMemoireClientDAO implements ClientDAO {
 			//si le nom n'a pas ete change
 			if ((donnees.get(idx).getNom().equals(client.getNom())) && (donnees.get(idx).getPrenom().equals(client.getPrenom())) && (donnees.get(idx).getIdentifiant().equals(client.getIdentifiant())) )
 				donnees.set(idx, client);
-			//sinon si le nom a pas ete change, on regarde si le nom existe deja
+			//sinon si le nom a ete change, on regarde si le nom existe deja
 			else if (!duplicata(client))
 				donnees.set(idx, client);
 			else

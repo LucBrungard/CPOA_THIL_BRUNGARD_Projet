@@ -60,7 +60,7 @@ public class AjoutLigneCommandeController implements Initializable {
 
 		int quantite = 0;
 
-		//Objet de type Categorie qui correspond a l'objet selectionne dans le choice box
+		//Objet de type Produit qui correspond a l'objet selectionne dans le choice box
 		
 		Produit selectProduit = cbxProduit.getSelectionModel().getSelectedItem(); 
 		int idProduit = 0;
@@ -69,7 +69,7 @@ public class AjoutLigneCommandeController implements Initializable {
 			idProduit = selectProduit.getId();
 		}
 		
-		//on convertit le tarif qui est en String en int 
+		//on convertit la quantite qui est en String en int 
 		try {
 			quantite = Integer.parseInt(editQuantite.getText().trim());
 		}
@@ -77,14 +77,15 @@ public class AjoutLigneCommandeController implements Initializable {
 			this.lblAffichage.setText(e.getMessage());
 		}
 		
-		//On creer le produit. Si erreur, elle sera affichee dans le label a cet effet
-		//On enregistre l'instance de produit que l'on vient de creer pour la recuperer sur la page PageProduitController
+		//On creer la ligne commande. Si erreur, elle sera affichee dans le label a cet effet
+		//On enregistre l'instance de ligne commande que l'on vient de creer pour la recuperer sur la page DetailCommandeController
 		try {
 			
-			//On creer dans la DAO l'objet Produit
+			//On creer dans la DAO l'objet ligneCommande
 			LigneCommande ligneCommande = new LigneCommande(selectedItem.getId(), idProduit, quantite, MainController.produitDAO.getById(idProduit).getTarif());
 			MainController.ligneCommandeDAO.create(ligneCommande); 
 			
+			//on met à jour la commande
 			LocalDate date = selectedItem.getDate(); 
 			int client = selectedItem.getIdClient(); 
 			HashMap<Produit, LigneCommande> lc = selectedItem.getLigneCommande(); 
@@ -93,8 +94,6 @@ public class AjoutLigneCommandeController implements Initializable {
 			MainController.commandeDAO.update(commande);
 			
 			this.ligneCommandeAjout = ligneCommande;
-		
-			
 			
 			//On récupère la scene sur laquelle le btnModif est place et on ferme cette fenetre
 			Stage stage = (Stage) btnCreer.getScene().getWindow();

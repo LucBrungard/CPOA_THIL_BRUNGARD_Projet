@@ -53,30 +53,32 @@ public class DetailClientController implements Initializable {
 		
 	}
 
+	// on ouvre une nouvelle fenetre contenant les infos du client
 	public void detailClient() {
 	}
 	
+	//on affiche les commandes du client sélectionné
 	public void voirCommande() {
 		Stage nStage = new Stage();
 		try {
-			//On charge l'url de la page ModifCateg.fxml
+			//On charge l'url de la page PageCommande.fxml
 			URL fxmlURL=getClass().getResource("/fxml/page/PageCommande.fxml");
 			FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 			Node root = fxmlLoader.load();
 			
-			//On affiche la fenetre ModifCateg
+			//On recupere le controleur de la page PageComma,de.fxml
+			PageCommandeController controller = fxmlLoader.getController();
+			controller.getActualiser().setVisible(false);
+			
+			//On charge les donnees de la ligne selectionnee dans la classe controleur PageCommandeController
+			controller.initData(selectedItem); 
+			
+			//On affiche la fenetre contenant les commandes
 			Scene scene = new Scene((AnchorPane) root, 900, 440);
 			nStage.setScene(scene);
 			nStage.setResizable(false);
 			nStage.setTitle("Commande");
 			nStage.initModality(Modality.APPLICATION_MODAL);
-			
-			//On recupere le controleur de la page ModifCateg.fxml
-			PageCommandeController controller = fxmlLoader.getController();
-			controller.getActualiser().setVisible(false);
-			
-			//On charge les donnees de la ligne selectionnee dans la classe controleur EditCategorieController
-			controller.initData(selectedItem); 
 			
 			//Et on affiche la page et on attend qu'elle soit fermee
 			nStage.showAndWait();
