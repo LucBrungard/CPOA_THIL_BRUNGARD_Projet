@@ -49,6 +49,7 @@ COMMANDE :
 - bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
 - boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
 - à partir de la fiche détail de la commande, visualisation des lignes de commandes
+- possibilité de filtrer les commandes par client ou par produit 
 
  LIGNE COMMANDE : 
 - à partir de la fiche détail de la commande, affichage des lignes de commandes
