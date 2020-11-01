@@ -1,4 +1,9 @@
 # CPOA_THIL_BRUNGARD_Projet
+Une choiceBox permettant le changement de persistance est disponible pour toutes les pages (une actualisation des données est nécessaire après un changement de persistance)
+
+CE QUI NE FONCTIONNE PAS :
+-lien vers une image pour les catégories
+
 Ce qui fonctionne :
 PRODUITS :
 - affichage des produits
@@ -6,7 +11,7 @@ PRODUITS :
 - modification d'un produit (changement de nom possible uniquement si le nom est unique)
 - suppression d'un produit (demande de confirmation activée)  possible uniquement si le produit n'est dans aucune ligne de commande
 - bouton pour actualiser les données après la modification d'une catégorie / quantité commandée
-- tri des données par nom / tarif / titre de catégorie / quantité commandée
+- tri (ordre croissant OU décroissant) des données par nom / tarif / titre de catégorie / quantité commandée
 - filtrage des données disponible pour nom / tarif / titre de catégorie
 - bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
 - boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
@@ -16,8 +21,9 @@ CATEGORIE :
 - affichage des catégories
 - ajout d'une catégorie qui possède un titre unique (pas de duplicata)
 - modification d'une catégorie (changement de titre possible uniquement si le titre est unique)
-- suppression d'un produit (demande de confirmation activée)  possible uniquement si le produit n'est dans aucune ligne de commande
-- tri des données par titre / visuel
+- suppression d'une catgéorie (demande de confirmation activée) possible uniquement si aucun produit n'est issu de cette catégorie
+- bouton pour actualiser les données
+- tri (ordre croissant OU décroissant) des données par titre / visuel
 - filtrage des données disponible pour titre / visuel
 - bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
 - boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
@@ -53,3 +59,14 @@ COMMANDE :
 - bouton ajout activé uniquement lorsqu'aucune ligne est séléctionnée
 - boutons modification / suppression activés uniquement lorsqu'une ligne est séléctionnée
 
+
+Répartition du travail:
+- Le design et la réalisation de l'application ont été réalisé par Luc BRUNGARD
+- Tout ce qui concerne les produits et catégories ont été géré par Luc BRUNGARD
+- Tout ce qui concerne les clients et commandes et lignes de commandes ont été géré par Claire THIL
+
+Notre répartition du travail serait de 50% pour Luc BRUNGARD et 50% pour Claire THIL 
+
+Explication :
+- Les parties produit + catégorie sont moins conséquentes que les partis clients + commandes + lignes de commandes
+- pour palier à cette inégalité, Luc BRUNGARD a réaliser le design de l'application 
