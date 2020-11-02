@@ -168,7 +168,7 @@ public class Client {
 	
 	@Override
 	public String toString() {
-		return id + ", " + nom + ", " + prenom;
+		return nom + ", " + prenom;
 	}
 	
 }

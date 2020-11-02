@@ -21,7 +21,7 @@ public class Main extends Application{
 			Scene scene = new Scene((AnchorPane) root, 900, 485);
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
-			primaryStage.setTitle("Ma premiere fenetre JavaFX");
+			primaryStage.setTitle("Gestionnaire de vente de pulls moches");
 			primaryStage.show();
 		}
 		catch (Exception e) {
