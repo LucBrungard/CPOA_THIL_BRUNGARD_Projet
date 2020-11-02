@@ -7,6 +7,7 @@ import java.net.URL;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -236,8 +237,11 @@ public class PageCommandeController implements Initializable {
 			nStage.initModality(Modality.APPLICATION_MODAL);
 			nStage.showAndWait();
 			
+			try {
 			for(Commande commande : tabCommande.getItems()) {
 				if (!MainController.commandeDAO.findAll().contains(commande)) tabCommande.getItems().remove(commande); 
+			}
+			} catch(ConcurrentModificationException e) {
 			}
 		}
 		catch (Exception e) {
@@ -245,6 +249,14 @@ public class PageCommandeController implements Initializable {
 		}
 	}
 	
+	public TableView<Commande> getTabCommande() {
+		return tabCommande;
+	}
+
+	public void setTabCommande(TableView<Commande> tabCommande) {
+		this.tabCommande = tabCommande;
+	}
+
 	//Charge la page ModifCommande et recupere les donnees pour les modifier dans le tableau
 	public void modifCommande() {
 		Stage nStage = new Stage();
