@@ -1,7 +1,8 @@
 For those who would like to see how works this little application, you can download the script of the database if you want to use the mySQL part.
 I used the jre1.8.0_261 but if you don't have it, remember to have a jdk like 14 or 13 (you can check here : [https://www.oracle.com/fr/java/technologies/javase-downloads.html](https://www.oracle.com/fr/java/technologies/javase-downloads.html))
 Remember to check the buildpath and to change the dbname in connexion/Connexion.java
-![alt text](https://ibb.co/g7tgRpV)
+
+![capture](https://i.ibb.co/X4FJCg8/Capture.png)
 
 # **Compte rendu des réalisations du projet**
 
